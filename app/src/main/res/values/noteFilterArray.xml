@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="noteFilterArray">
+        <item>제목</item>
+        <item>ISBN</item>
+    </string-array>
+</resources>

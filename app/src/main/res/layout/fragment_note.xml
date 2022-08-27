@@ -11,20 +11,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/SearchBlock"
-            android:layout_width="319dp"
-            android:layout_height="39dp"
+        <Spinner
+            android:id="@+id/noteSearchFilter"
+            android:layout_width="57dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:contentDescription="noteSearchFilter"
+            android:dropDownWidth="100dp"
+            android:spinnerMode="dropdown"
+            app:layout_constraintEnd_toStartOf="@+id/noteSearchView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <SearchView
+            android:id="@+id/noteSearchView"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
-            android:text="Search"
+            android:iconifiedByDefault="false"
+            android:inputType="text"
+            android:queryHint="검색어를 입력하세요"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/noteSearchFilter"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
-            android:layout_width="356dp"
-            android:layout_height="630dp"
+            android:layout_width="367dp"
+            android:layout_height="628dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
@@ -33,24 +49,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.49"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/SearchBlock" />
-
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="46dp"
-            android:layout_height="41dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-            app:layout_constraintEnd_toStartOf="@+id/SearchBlock"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/noteSearchFilter" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
-
-
-
-<!--
-
--->

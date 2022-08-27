@@ -18,8 +18,6 @@ public class StatisticsFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String TEXT_HEADER = "지금까지 총";
-    private static final String TEXT_FOOTER = "권의 책을 읽었습니다.";
 
     // TODO: Rename and change types of parameters
     // private String header;
@@ -41,8 +39,6 @@ public class StatisticsFragment extends Fragment {
     public static StatisticsFragment newInstance() {
         StatisticsFragment fragment = new StatisticsFragment();
         Bundle args = new Bundle();
-//        args.putString(TEXT_HEADER, header);
-//        args.putString(TEXT_FOOTER, footer);
         fragment.setArguments(args);
         return fragment;
     }
@@ -53,8 +49,6 @@ public class StatisticsFragment extends Fragment {
         count = 7777; // Test Line
         if (getArguments() != null) {
             count = 4896; // TODO: 여기서 파일입출력으로 읽은 책의 수를 받아옴
-            // header = getArguments().getString(TEXT_HEADER);
-            // footer = getArguments().getString(TEXT_FOOTER);
         }
     }
 
