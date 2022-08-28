@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="GyeongsangN">
+        <item>전체</item>
+        <item>경산시</item>
+        <item>경주시</item>
+        <item>고령군</item>
+        <item>구미시</item>
+        <item>군위군</item>
+        <item>김천시</item>
+        <item>문경시</item>
+        <item>봉화군</item>
+        <item>상주시</item>
+        <item>성주군</item>
+        <item>안동시</item>
+        <item>영덕군</item>
+        <item>영양군</item>
+        <item>영주시</item>
+        <item>영천시</item>
+        <item>예천군</item>
+        <item>울릉군</item>
+        <item>울진군</item>
+        <item>의성군</item>
+        <item>청도군</item>
+        <item>청송군</item>
+        <item>칠곡군</item>
+        <item>포항시</item>
+    </string-array>
+</resources>
+<!--
+포항시 010
+경주시 020
+김천시 030
+안동시 040
+구미시 050
+영주시 060
+영천시 070
+상주시 080
+문경시 090
+경산시 100
+군위군 510
+의성군 520
+청송군 530
+영양군 540
+영덕군 550
+청도군 560
+고령군 570
+성주군 580
+칠곡군 590
+예천군 600
+봉화군 610
+울진군 620
+울릉군 630
+-->

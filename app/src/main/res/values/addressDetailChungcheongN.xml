@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ChungcheongN">
+        <item>전체</item>
+        <item>괴산군</item>
+        <item>단양군</item>
+        <item>보은군</item>
+        <item>영동군</item>
+        <item>옥천군</item>
+        <item>음성군</item>
+        <item>제천시</item>
+        <item>증평군</item>
+        <item>진천군</item>
+        <item>청주시</item>
+        <item>충주시</item>
+    </string-array>
+</resources>
+<!--
+충주시 020
+제천시 030
+청주시 040
+보은군 520
+옥천군 530
+영동군 540
+진천군 550
+괴산군 560
+음성군 570
+단양군 580
+증평군 590
+-->

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="Daegu">
+        <item>전체</item>
+        <item>남구</item>
+        <item>달서구</item>
+        <item>달성군</item>
+        <item>동구</item>
+        <item>북구</item>
+        <item>서구</item>
+        <item>수성구</item>
+        <item>중구</item>
+    </string-array>
+</resources>
+<!--
+중구 010
+동구 020
+서구 030
+남구 040
+북구 050
+수성구 060
+달서구 070
+달성군 510
+-->

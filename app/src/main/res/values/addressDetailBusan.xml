@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="Busan">
+        <item>전체</item>
+        <item>강서구</item>
+        <item>금정구</item>
+        <item>기장군</item>
+        <item>남구</item>
+        <item>동구</item>
+        <item>동래구</item>
+        <item>부산진구</item>
+        <item>북구</item>
+        <item>사상구</item>
+        <item>사하구</item>
+        <item>서구</item>
+        <item>수영구</item>
+        <item>연제구</item>
+        <item>영도구</item>
+        <item>중구</item>
+        <item>해운대구</item>
+    </string-array>
+</resources>
+<!--
+중구 010
+서구 020
+동구 030
+영도구 040
+부산진구 050
+동래구 060
+남구 070
+북구 080
+해운대구 090
+사하구 100
+금정구 110
+강서구 120
+연제구 130
+수영구 140
+사상구 150
+기장군 510
+-->

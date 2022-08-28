@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="Daejeon">
+        <item>전체</item>
+        <item>대덕구</item>
+        <item>동구</item>
+        <item>서구</item>
+        <item>유성구</item>
+        <item>중구</item>
+    </string-array>
+</resources>
+<!--
+동구 010
+중구 020
+서구 030
+유성구 040
+대덕구 050
+-->

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="Gwangju">
+        <item>전체</item>
+        <item>광산구</item>
+        <item>남구</item>
+        <item>동구</item>
+        <item>북구</item>
+        <item>서구</item>
+    </string-array>
+</resources>
+<!--
+동구 010
+서구 020
+남구 030
+북구 040
+광산구 050
+-->

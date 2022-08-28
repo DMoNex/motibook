@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="Ulsan">
+        <item>전체</item>
+        <item>남구</item>
+        <item>동구</item>
+        <item>북구</item>
+        <item>울주군</item>
+        <item>중구</item>
+    </string-array>
+</resources>
+<!--
+중구 010
+남구 020
+동구 030
+북구 040
+울주군 510
+-->

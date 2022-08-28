@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="Incheon">
+        <item>전체</item>
+        <item>강화군</item>
+        <item>계양구</item>
+        <item>남동구</item>
+        <item>동구</item>
+        <item>미추홀구</item>
+        <item>부평구</item>
+        <item>서구</item>
+        <item>연수구</item>
+        <item>옹진군</item>
+        <item>중구</item>
+    </string-array>
+</resources>
+<!--
+중구 010
+동구 020
+연수구 040
+남동구 050
+부평구 060
+계양구 070
+서구 080
+미추홀구 090
+강화군 510
+옹진군 520
+-->
