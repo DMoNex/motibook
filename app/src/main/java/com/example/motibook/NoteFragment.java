@@ -2,7 +2,6 @@ package com.example.motibook;
 
 import android.os.Bundle;
 
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -44,8 +43,6 @@ public class NoteFragment extends Fragment {
     public static NoteFragment newInstance(String param1, String param2) {
         NoteFragment fragment = new NoteFragment();
         Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }

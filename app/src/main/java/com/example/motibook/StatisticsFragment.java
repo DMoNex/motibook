@@ -1,8 +1,11 @@
 package com.example.motibook;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +27,7 @@ public class StatisticsFragment extends Fragment {
     // private String footer;
     private int count; // 파일 입출력 통해 받을 값(읽은 책 수)
     TextView countView;
+    MainActivity mainAct;
 
     public StatisticsFragment() {
         // Required empty public constructor
@@ -59,6 +63,28 @@ public class StatisticsFragment extends Fragment {
         ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_statistics, container, false);
         countView = rootView.findViewById(R.id.textCountView);
         countView.setText(Integer.toString(count));
+        countView.setOnClickListener(addBookListener);
         return rootView;
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        mainAct = (MainActivity)getActivity();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        mainAct = null;
+    }
+
+    View.OnClickListener addBookListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mainAct.onAddBookFragment();
+        }
+    };
 }

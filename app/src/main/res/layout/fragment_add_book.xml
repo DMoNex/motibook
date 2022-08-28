@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NoteFragment">
+    tools:context=".AddBookFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/Note_List"
@@ -12,20 +12,20 @@
         android:layout_height="match_parent">
 
         <Spinner
-            android:id="@+id/noteSearchFilter"
+            android:id="@+id/bookSearchFilter"
             android:layout_width="57dp"
             android:layout_height="50dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
-            android:contentDescription="noteSearchFilter"
+            android:contentDescription="bookSearchFilter"
             android:dropDownWidth="100dp"
             android:spinnerMode="dropdown"
-            app:layout_constraintEnd_toStartOf="@+id/noteSearchView"
+            app:layout_constraintEnd_toStartOf="@+id/bookSearchView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <SearchView
-            android:id="@+id/noteSearchView"
+            android:id="@+id/bookSearchView"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginTop="20dp"
@@ -34,11 +34,11 @@
             android:inputType="text"
             android:queryHint="검색어를 입력하세요"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/noteSearchFilter"
+            app:layout_constraintStart_toEndOf="@+id/bookSearchFilter"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/noteSearchListView"
+            android:id="@+id/bookSearchListView"
             android:layout_width="367dp"
             android:layout_height="628dp"
             android:layout_marginStart="20dp"
@@ -49,6 +49,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.49"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/noteSearchFilter" />
+            app:layout_constraintTop_toBottomOf="@+id/bookSearchFilter" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </FrameLayout>

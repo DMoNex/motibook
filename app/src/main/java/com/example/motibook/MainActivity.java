@@ -1,6 +1,7 @@
 package com.example.motibook;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -74,5 +75,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerLayout.closeDrawer(navigationView);
         return true;
+    }
+
+    public void onAddBookFragment() {
+        AddBookFragment addBookFragment = new AddBookFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.Screen, addBookFragment);
+        transaction.commit();
     }
 }
