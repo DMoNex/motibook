@@ -3,15 +3,20 @@ package com.example.motibook;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,7 +30,12 @@ public class NoteFragment extends Fragment {
 
     private Spinner filter;
     private SearchView noteSearch;
+    private RecyclerView noteList;
+    private ArrayList<NoteListItem> noteListItems;
     int noteSearchFlag = 0;
+
+    // Search 에서 호출하기 위해 여기에 선언
+    NoteListItemAdapter noteListItemAdapter;
 
     public NoteFragment() {
         // Required empty public constructor
@@ -62,13 +72,29 @@ public class NoteFragment extends Fragment {
         // Inflate the layout for this fragment
         ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_note, container, false);
 
-        filter = (Spinner)rootView.findViewById(R.id.noteSearchFilter);
-        noteSearch = (SearchView) rootView.findViewById(R.id.noteSearchView);
+        noteListItems = new ArrayList<NoteListItem>();
 
+        // filter 멤버는 Spinner 메뉴 noteSearchFilter 임
+        filter = (Spinner)rootView.findViewById(R.id.noteSearchFilter);
+        // noteSearch 멤버는 SearchView noteSearchView 임
+        noteSearch = (SearchView) rootView.findViewById(R.id.noteSearchView);
+        // noteList 멤버는 RecyclerView noteSearchListView 임
+        noteList = (RecyclerView) rootView.findViewById(R.id.noteSearchListView);
+
+        //Filter 항목을 준비한 Array 와 연결해줄 Adapter
         ArrayAdapter<CharSequence> noteFilterAdapter = ArrayAdapter.createFromResource(
                 getActivity(), R.array.noteFilterArray, android.R.layout.simple_spinner_dropdown_item);
+        //filter 의 작동방식 지정
         noteFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        // noteList Manager 지정
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
+        noteList.setLayoutManager(linearLayoutManager);
+        // noteList 항목을 Array 와 연결해줄 Adapter 생성
+        noteListItemAdapter = new NoteListItemAdapter(noteListItems);
+        noteList.setAdapter(noteListItemAdapter);
 
+
+        // filter 와 Adapter 연결
         filter.setAdapter(noteFilterAdapter);
         filter.setOnItemSelectedListener(noteFilterListener);
 
@@ -77,6 +103,7 @@ public class NoteFragment extends Fragment {
         return rootView;
     }
 
+    // 필터 Listener (Spinner)
     AdapterView.OnItemSelectedListener noteFilterListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -94,6 +121,7 @@ public class NoteFragment extends Fragment {
         }
     };
 
+    // 검색창 Listener
     SearchView.OnQueryTextListener noteSearchListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
@@ -104,8 +132,25 @@ public class NoteFragment extends Fragment {
             else if (noteSearchFlag == 1) { // ISBN 검색인 경우
 
             }
-            //Test Line
+            /// For Test Start
+            noteListItems.clear();
+            noteListItems.add(new NoteListItem("1000000000001", "xxjg48ghag"));
+            noteListItems.add(new NoteListItem("1000000000002", "8yzwktapad"));
+            noteListItems.add(new NoteListItem("1000000000003", "hsc73iajdn"));
+            noteListItems.add(new NoteListItem("1000000000004", "mz6rby2bhl"));
+            noteListItems.add(new NoteListItem("1000000000005", "pi2tkk69fw"));
+            noteListItems.add(new NoteListItem("1000000000006", "u7k58rjubo"));
+            noteListItems.add(new NoteListItem("1000000000007", "bxmu5yvwgw"));
+            noteListItems.add(new NoteListItem("1000000000008", "l5osx6m00j"));
+            noteListItems.add(new NoteListItem("1000000000009", "0k05embc8r"));
+            noteListItems.add(new NoteListItem("1000000000010", "y1rqccos64"));
+
             Toast.makeText(getActivity(), "검색어 = "+query, Toast.LENGTH_LONG).show();
+            /// For Test End
+
+            // noteSearchListView 갱신
+            noteListItemAdapter.notifyDataSetChanged();
+
             return true;
         }
 
