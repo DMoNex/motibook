@@ -16,6 +16,8 @@ import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 
 /**
@@ -32,6 +34,7 @@ public class NoteFragment extends Fragment {
     private SearchView noteSearch;
     private RecyclerView noteList;
     private ArrayList<NoteListItem> noteListItems;
+    private FloatingActionButton noteAddButton;
     int noteSearchFlag = 0;
 
     // Search 에서 호출하기 위해 여기에 선언
@@ -80,6 +83,8 @@ public class NoteFragment extends Fragment {
         noteSearch = (SearchView) rootView.findViewById(R.id.noteSearchView);
         // noteList 멤버는 RecyclerView noteSearchListView 임
         noteList = (RecyclerView) rootView.findViewById(R.id.noteSearchListView);
+        // noteAddButton 멤버는 FloatingActionButton noteAddButton 임
+        noteAddButton = (FloatingActionButton) rootView.findViewById(R.id.noteAddButton);
 
         //Filter 항목을 준비한 Array 와 연결해줄 Adapter
         ArrayAdapter<CharSequence> noteFilterAdapter = ArrayAdapter.createFromResource(
@@ -92,13 +97,13 @@ public class NoteFragment extends Fragment {
         // noteList 항목을 Array 와 연결해줄 Adapter 생성
         noteListItemAdapter = new NoteListItemAdapter(noteListItems);
         noteList.setAdapter(noteListItemAdapter);
-
-
         // filter 와 Adapter 연결
         filter.setAdapter(noteFilterAdapter);
-        filter.setOnItemSelectedListener(noteFilterListener);
 
+        // 여러가지 Listener 설정
+        filter.setOnItemSelectedListener(noteFilterListener);
         noteSearch.setOnQueryTextListener(noteSearchListener);
+        noteAddButton.setOnClickListener(noteAddButtonListener);
 
         return rootView;
     }
@@ -157,6 +162,13 @@ public class NoteFragment extends Fragment {
         @Override
         public boolean onQueryTextChange(String newText) {
             return false;
+        }
+    };
+
+    View.OnClickListener noteAddButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // 파일 생성 화면 띄우기
         }
     };
 }
