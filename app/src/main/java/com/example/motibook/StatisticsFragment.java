@@ -15,9 +15,11 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
@@ -38,13 +40,6 @@ public class StatisticsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment StatisticsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static StatisticsFragment newInstance() {
         StatisticsFragment fragment = new StatisticsFragment();
         Bundle args = new Bundle();
@@ -60,15 +55,15 @@ public class StatisticsFragment extends Fragment {
         count = 7777;
         bookGraphDataEntries.clear();
         bookGraphDataEntries.add(new BarEntry(0, 100));
-        bookGraphDataEntries.add(new BarEntry(1, 100));
-        bookGraphDataEntries.add(new BarEntry(2, 100));
-        bookGraphDataEntries.add(new BarEntry(3, 100));
-        bookGraphDataEntries.add(new BarEntry(4, 100));
-        bookGraphDataEntries.add(new BarEntry(5, 100));
-        bookGraphDataEntries.add(new BarEntry(6, 100));
-        bookGraphDataEntries.add(new BarEntry(7, 100));
-        bookGraphDataEntries.add(new BarEntry(8, 100));
-        bookGraphDataEntries.add(new BarEntry(9, 100));
+        bookGraphDataEntries.add(new BarEntry(1, 200));
+        bookGraphDataEntries.add(new BarEntry(2, 50));
+        bookGraphDataEntries.add(new BarEntry(3, 30));
+        bookGraphDataEntries.add(new BarEntry(4, 33));
+        bookGraphDataEntries.add(new BarEntry(5, 81));
+        bookGraphDataEntries.add(new BarEntry(6, 130));
+        bookGraphDataEntries.add(new BarEntry(7, 83));
+        bookGraphDataEntries.add(new BarEntry(8, 350));
+        bookGraphDataEntries.add(new BarEntry(9, 200));
 
         //String[] labels = {"총류, 도서학, 문헌정보학, 백과사전, 강연&수필&연설, 간행물, 학회, 신문, 문학, 향토"}
 
@@ -89,22 +84,7 @@ public class StatisticsFragment extends Fragment {
 
         bookGraph = rootView.findViewById(R.id.bookGraph);
 
-        BarDataSet bookGraphDataset = new BarDataSet(bookGraphDataEntries, "book count");
-        bookGraphDataset.setColors(ColorTemplate.PASTEL_COLORS);
-        bookGraphDataset.setValueTextColor(Color.BLACK);
-        bookGraphDataset.setValueTextSize(16f);
-
-        BarData bookGraphData = new BarData(bookGraphDataset);
-
-        XAxis xAxis = bookGraph.getXAxis();
-        xAxis.setDrawLabels(true);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.toString();
-        xAxis.setSpaceMax(1f);
-        xAxis.setSpaceMin(1f);
-        xAxis.setGranularity(1);
-
-        bookGraph.setData(bookGraphData);
+        setGraphStyle();
 
         return rootView;
     }
@@ -129,4 +109,40 @@ public class StatisticsFragment extends Fragment {
             mainAct.onAddBookFragment();
         }
     };
+
+    void setGraphStyle() {
+        BarDataSet bookGraphDataset = new BarDataSet(bookGraphDataEntries, "book count");
+        bookGraphDataset.setColor(Color.parseColor("#99FFCC"));
+        bookGraphDataset.setValueTextColor(Color.BLACK);
+        bookGraphDataset.setValueTextSize(16f);
+
+        BarData bookGraphData = new BarData(bookGraphDataset);
+
+        XAxis xAxis = bookGraph.getXAxis();
+        xAxis.setDrawLabels(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setDrawLabels(false);
+        xAxis.setAxisMinimum(-1f);
+        xAxis.setAxisMaximum(10f);
+
+        YAxis yAxisL = bookGraph.getAxisLeft();
+        yAxisL.setDrawGridLines(false);
+        yAxisL.setDrawAxisLine(false);
+        yAxisL.setAxisMinimum(0f);
+        yAxisL.setDrawLabels(false);
+
+        YAxis yAxisR = bookGraph.getAxisRight();
+        yAxisR.setDrawGridLines(false);
+        yAxisR.setDrawAxisLine(false);
+        yAxisR.setDrawLabels(false);
+
+        bookGraph.getDescription().setEnabled(false);
+        bookGraph.setTouchEnabled(false);
+        bookGraph.getLegend().setEnabled(false);
+        bookGraph.setExtraOffsets(10f, 0f, 10f, 30f);
+
+        // 데이터 세팅
+        bookGraph.setData(bookGraphData);
+    }
 }
