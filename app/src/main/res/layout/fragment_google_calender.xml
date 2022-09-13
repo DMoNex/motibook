@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GoogleCalenderFragment">
+
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:rowCount="1"
+        android:orientation="vertical">
+
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_row="0"/>
+
+        <Button
+            android:id="@+id/btnLoadCalender"
+            android:text="Load"
+            android:layout_height="50dp"
+            android:layout_width="200dp"
+            android:layout_row="1"
+            android:layout_column="0"/>
+
+        <Button
+            android:id="@+id/btnInsert"
+            android:text="Temp plan insert"
+            android:layout_height="50dp"
+            android:layout_width="200dp"
+            android:layout_row="1"
+            android:layout_column="1"/>
+
+    </GridLayout>
+
+</FrameLayout>
