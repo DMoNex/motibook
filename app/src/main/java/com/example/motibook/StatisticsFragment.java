@@ -19,6 +19,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
@@ -35,6 +36,8 @@ public class StatisticsFragment extends Fragment {
     TextView countView;
     MainActivity mainAct;
     BarChart bookGraph;
+
+    String[] labels = {"총류", "철학", "종교", "사회", "자연", "기술", "예술", "언어", "문학", "역사"};
 
     public StatisticsFragment() {
         // Required empty public constructor
@@ -64,8 +67,6 @@ public class StatisticsFragment extends Fragment {
         bookGraphDataEntries.add(new BarEntry(7, 83));
         bookGraphDataEntries.add(new BarEntry(8, 350));
         bookGraphDataEntries.add(new BarEntry(9, 200));
-
-        //String[] labels = {"총류, 도서학, 문헌정보학, 백과사전, 강연&수필&연설, 간행물, 학회, 신문, 문학, 향토"}
 
         /// Test Data End
         if (getArguments() != null) {
@@ -119,12 +120,14 @@ public class StatisticsFragment extends Fragment {
         BarData bookGraphData = new BarData(bookGraphDataset);
 
         XAxis xAxis = bookGraph.getXAxis();
+        xAxis.setLabelCount(10);
         xAxis.setDrawLabels(true);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
-        xAxis.setDrawLabels(false);
         xAxis.setAxisMinimum(-1f);
         xAxis.setAxisMaximum(10f);
+        xAxis.setGranularity(1f);
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
 
         YAxis yAxisL = bookGraph.getAxisLeft();
         yAxisL.setDrawGridLines(false);

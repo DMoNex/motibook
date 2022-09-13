@@ -18,7 +18,8 @@ import android.widget.Toast;
  * Use the {@link AddBookFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AddBookFragment extends Fragment {
+
+public class AddBookFragment extends Fragment implements OnBackPressedListener {
 
     private Spinner filter;
     private SearchView bookSearch;
@@ -108,4 +109,12 @@ public class AddBookFragment extends Fragment {
             return false;
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        MainActivity activity = (MainActivity) getActivity();
+        activity.FragmentView(1);
+    }
+
+
 }
