@@ -12,11 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SubscriptionFilterFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SubscriptionFilterFragment extends Fragment {
 
     private Spinner regionFilter;
@@ -25,19 +20,13 @@ public class SubscriptionFilterFragment extends Fragment {
     ArrayAdapter<CharSequence> regionFilterAdapter;
     ArrayAdapter<CharSequence> subRegionFilterAdapter;
 
+    String regionCodeHead;
+    String regionCodeTail;
+
     public SubscriptionFilterFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SubscriptionFilterFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static SubscriptionFilterFragment newInstance(String param1, String param2) {
         SubscriptionFilterFragment fragment = new SubscriptionFilterFragment();
         Bundle args = new Bundle();
@@ -84,87 +73,104 @@ public class SubscriptionFilterFragment extends Fragment {
                             getActivity(), R.array.Empty, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerEmpty);
                     break;
-                case 1: // 강원도
+                case 1: // 강원도 32
+                    regionCodeHead = "32";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Gangwon, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerGangwon);
                     break;
-                case 2: // 경기도
+                case 2: // 경기도 31
+                    regionCodeHead = "31";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Gyeonggi, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerGyeonggi);
                     break;
-                case 3: // 경상남도
+                case 3: // 경상남도 38
+                    regionCodeHead = "38";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.GyeongsangS, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerGyeongsangS);
                     break;
-                case 4: // 경상북도
+                case 4: // 경상북도 37
+                    regionCodeHead = "37";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.GyeongsangN, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerGyeongsangN);
                     break;
-                case 5: // 광주
+                case 5: // 광주 24
+                    regionCodeHead = "24";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Gwangju, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerGwangju);
                     break;
-                case 6: // 대구
+                case 6: // 대구 22
+                    regionCodeHead = "22";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Daegu, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerDaegu);
                     break;
-                case 7: // 대전
+                case 7: // 대전 25
+                    regionCodeHead = "25";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Daejeon, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerDaejeon);
                     break;
-                case 8: // 부산
+                case 8: // 부산 21
+                    regionCodeHead = "21";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Busan, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerBusan);
                     break;
-                case 9: // 서울
+                case 9: // 서울 11
+                    regionCodeHead = "11";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Seoul, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerSeoul);
                     break;
-                case 10: // 세종
+                case 10: // 세종 29
+                    regionCodeHead = "29";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Sejong, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerSejong);
                     break;
-                case 11: // 울산
+                case 11: // 울산 26
+                    regionCodeHead = "26";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Ulsan, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerUlsan);
                     break;
-                case 12: // 인천
+                case 12: // 인천 23
+                    regionCodeHead = "23";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Incheon, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerIncheon);
                     break;
-                case 13: // 전라남도
+                case 13: // 전라남도 36
+                    regionCodeHead = "36";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.JeollaS, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerJeollaS);
                     break;
-                case 14: // 전라북도
+                case 14: // 전라북도 35
+                    regionCodeHead = "35";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.JeollaN, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerJeollaN);
                     break;
-                case 15: // 제주
+                case 15: // 제주 39
+                    regionCodeHead = "39";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Jeju, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerJeju);
                     break;
-                case 16: // 충청남도
+                case 16: // 충청남도 34
+                    regionCodeHead = "34";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.ChungcheongS, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerChungcheongS);
                     break;
-                case 17: // 충청북도
+                case 17: // 충청북도 33
+                    regionCodeHead = "33";
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.ChungcheongN, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerChungcheongN);
