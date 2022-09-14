@@ -83,18 +83,17 @@ public class SubscriptionFilterFragment extends Fragment {
                 case 1: // 강원도
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Gangwon, android.R.layout.simple_spinner_item);
-                    subRegionFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerGangwon);
-                    subRegionFilter.setAdapter(subRegionFilterAdapter);
                     break;
                 case 2: // 경기도
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Gyeonggi, android.R.layout.simple_spinner_item);
-                    subRegionFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerGyeonggi);
-                    subRegionFilter.setAdapter(subRegionFilterAdapter);
                     break;
                 case 3: // 경상남도
+                    subRegionFilterAdapter = ArrayAdapter.createFromResource(
+                            getActivity(), R.array.GyeongsangS, android.R.layout.simple_spinner_item);
+                    subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerGyeongsangS);
                     break;
                 case 4: // 경상북도
                     break;
@@ -125,6 +124,8 @@ public class SubscriptionFilterFragment extends Fragment {
                 case 17: // 충청북도
                     break;
             }
+            subRegionFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            subRegionFilter.setAdapter(subRegionFilterAdapter);
         }
 
         @Override
@@ -260,4 +261,16 @@ public class SubscriptionFilterFragment extends Fragment {
 
         }
     };
+
+    AdapterView.OnItemSelectedListener subRegionFilterListenerGyeongsangS = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    }
 }
