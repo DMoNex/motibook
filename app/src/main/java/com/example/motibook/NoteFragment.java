@@ -88,9 +88,9 @@ public class NoteFragment extends Fragment {
 
         //Filter 항목을 준비한 Array 와 연결해줄 Adapter
         ArrayAdapter<CharSequence> noteFilterAdapter = ArrayAdapter.createFromResource(
-                getActivity(), R.array.noteFilterArray, android.R.layout.simple_spinner_dropdown_item);
+                getActivity(), R.array.noteFilterArray, android.R.layout.simple_spinner_item);
         //filter 의 작동방식 지정
-        noteFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        noteFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // noteList Manager 지정
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
         noteList.setLayoutManager(linearLayoutManager);
@@ -115,8 +115,10 @@ public class NoteFragment extends Fragment {
             switch (position) {
                 case 0: // SearchView 에서 제목으로 검색
                     noteSearchFlag = 0;
+                    break;
                 case 1: // SearchView 에서 ISBN 으로 검색
                     noteSearchFlag = 1;
+                    break;
             }
         }
 

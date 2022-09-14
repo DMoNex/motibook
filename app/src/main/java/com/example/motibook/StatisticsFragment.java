@@ -55,7 +55,7 @@ public class StatisticsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         /// Test Data Start
-        count = 7777;
+        count = 1257;
         bookGraphDataEntries.clear();
         bookGraphDataEntries.add(new BarEntry(0, 100));
         bookGraphDataEntries.add(new BarEntry(1, 200));

@@ -35,10 +35,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:text="Sample@gmail.com"
         android:textColor="#FF000000"
-        android:textSize="18dp"
+        android:textSize="15dp"
         app:layout_constraintStart_toEndOf="@+id/namecard_image"
         app:layout_constraintTop_toBottomOf="@+id/namecard_name" />
 

@@ -61,8 +61,8 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
 
         // Filter Array Note Filter Array 공유
         ArrayAdapter<CharSequence> bookFilterAdapter = ArrayAdapter.createFromResource(
-                getActivity(), R.array.noteFilterArray, android.R.layout.simple_spinner_dropdown_item);
-        bookFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                getActivity(), R.array.noteFilterArray, android.R.layout.simple_spinner_item);
+        bookFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         filter.setAdapter(bookFilterAdapter);
         filter.setOnItemSelectedListener(bookFilterListener);

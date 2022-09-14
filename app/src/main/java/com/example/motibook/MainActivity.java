@@ -129,8 +129,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.commit();
                 break;
             case 3:
-                GoogleCalenderFragment calenderFragment = new GoogleCalenderFragment();
-                transaction.replace(R.id.Screen, calenderFragment);
+//                GoogleCalenderFragment calenderFragment = new GoogleCalenderFragment();
+                SubscriptionFilterFragment subscriptionFilterFragment = new SubscriptionFilterFragment();
+                transaction.replace(R.id.Screen, subscriptionFilterFragment);
+//                transaction.replace(R.id.Screen, calenderFragment);
                 transaction.commit();
                 break;
         }
