@@ -69,6 +69,7 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeHead = "*"; // Query 할 때 전체검색 해야 함
                     subRegionFilterAdapter = ArrayAdapter.createFromResource(
                             getActivity(), R.array.Empty, android.R.layout.simple_spinner_item);
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerEmpty);
@@ -176,6 +177,7 @@ public class SubscriptionFilterFragment extends Fragment {
                     subRegionFilter.setOnItemSelectedListener(subRegionFilterListenerChungcheongN);
                     break;
             }
+            regionCodeTail = "*";
             subRegionFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             subRegionFilter.setAdapter(subRegionFilterAdapter);
         }
@@ -195,6 +197,7 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 default: // 전체(선택권X)
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
             }
         }
@@ -210,42 +213,61 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 강릉시
+                case 1: // 강릉시 030
+                    regionCodeTail = "030";
                     break;
-                case 2: // 고성군
+                case 2: // 고성군 600
+                    regionCodeTail = "600";
                     break;
-                case 3: // 동해시
+                case 3: // 동해시 040
+                    regionCodeTail = "040";
                     break;
-                case 4: // 삼척시
+                case 4: // 삼척시 070
+                    regionCodeTail = "070";
                     break;
-                case 5: // 속초시
+                case 5: // 속초시 060
+                    regionCodeTail = "060";
                     break;
-                case 6: // 양구군
+                case 6: // 양구군 580
+                    regionCodeTail = "580";
                     break;
-                case 7: // 양양군
+                case 7: // 양양군 610
+                    regionCodeTail = "610";
                     break;
-                case 8: // 영월군
+                case 8: // 영월군 530
+                    regionCodeTail = "530";
                     break;
-                case 9: // 원주시
+                case 9: // 원주시 020
+                    regionCodeTail = "020";
                     break;
-                case 10: // 인제군
+                case 10: // 인제군 590
+                    regionCodeTail = "590";
                     break;
-                case 11: // 정선군
+                case 11: // 정선군 550
+                    regionCodeTail = "550";
                     break;
-                case 12: // 철원군
+                case 12: // 철원군 560
+                    regionCodeTail = "560";
                     break;
-                case 13: // 춘천시
+                case 13: // 춘천시 010
+                    regionCodeTail = "010";
                     break;
-                case 14: // 태백시
+                case 14: // 태백시 050
+                    regionCodeTail = "050";
                     break;
-                case 15: // 평창군
+                case 15: // 평창군 540
+                    regionCodeTail = "540";
                     break;
-                case 16: // 홍천군
+                case 16: // 홍천군 510
+                    regionCodeTail = "510";
                     break;
-                case 17: // 화천군
+                case 17: // 화천군 570
+                    regionCodeTail = "570";
                     break;
-                case 18: // 횡성군
+                case 18: // 횡성군 520
+                    regionCodeTail = "520";
                     break;
             }
         }
@@ -261,68 +283,100 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 가평군
+                case 1: // 가평군 570
+                    regionCodeTail = "570";
                     break;
-                case 2: // 고양시
+                case 2: // 고양시 100
+                    regionCodeTail = "100";
                     break;
-                case 3: // 과천시
+                case 3: // 과천시 110
+                    regionCodeTail = "110";
                     break;
-                case 4: // 광명시
+                case 4: // 광명시 060
+                    regionCodeTail = "060";
                     break;
-                case 5: // 광주시
+                case 5: // 광주시 250
+                    regionCodeTail = "250";
                     break;
-                case 6: // 구리시
+                case 6: // 구리시 120
+                    regionCodeTail = "120";
                     break;
-                case 7: // 군포시
+                case 7: // 군포시 160
+                    regionCodeTail = "160";
                     break;
-                case 8: // 김포시
+                case 8: // 김포시 230
+                    regionCodeTail = "230";
                     break;
-                case 9: // 남양주시
+                case 9: // 남양주시 130
+                    regionCodeTail = "130";
                     break;
-                case 10: // 동두천시
+                case 10: // 동두천시 080
+                    regionCodeTail = "080";
                     break;
-                case 11: // 부천시
+                case 11: // 부천시 050
+                    regionCodeTail = "050";
                     break;
                 case 12: // 성남시
+                    regionCodeTail = "020";
                     break;
-                case 13: // 수원시
+                case 13: // 수원시 010
+                    regionCodeTail = "010";
                     break;
-                case 14: // 시흥시
+                case 14: // 시흥시 150
+                    regionCodeTail = "150";
                     break;
-                case 15: // 안산시
+                case 15: // 안산시 090
+                    regionCodeTail = "090";
                     break;
-                case 16: // 안성시
+                case 16: // 안성시 220
+                    regionCodeTail = "220";
                     break;
-                case 17: // 안양시
+                case 17: // 안양시 040
+                    regionCodeTail = "040";
                     break;
-                case 18: // 양주시
+                case 18: // 양주시 260
+                    regionCodeTail = "260";
                     break;
-                case 19: // 양평군
+                case 19: // 양평군 580
+                    regionCodeTail = "580";
                     break;
-                case 20: // 여주시
+                case 20: // 여주시 280
+                    regionCodeTail = "280";
                     break;
-                case 21: // 연천군
+                case 21: // 연천군 550
+                    regionCodeTail = "550";
                     break;
-                case 22: // 오산시
+                case 22: // 오산시 140
+                    regionCodeTail = "140";
                     break;
-                case 23: // 용인시
+                case 23: // 용인시 190
+                    regionCodeTail = "190";
                     break;
-                case 24: // 의왕시
+                case 24: // 의왕시 170
+                    regionCodeTail = "170";
                     break;
-                case 25: // 의정부시
+                case 25: // 의정부시 030
+                    regionCodeTail = "030";
                     break;
-                case 26: // 이천시
+                case 26: // 이천시 210
+                    regionCodeTail = "210";
                     break;
-                case 27: // 파주시
+                case 27: // 파주시 200
+                    regionCodeTail = "200";
                     break;
-                case 28: // 평택시
+                case 28: // 평택시 070
+                    regionCodeTail = "070";
                     break;
-                case 29: // 포천시
+                case 29: // 포천시 270
+                    regionCodeTail = "270";
                     break;
-                case 30: // 하남시
+                case 30: // 하남시 180
+                    regionCodeTail = "180";
                     break;
-                case 31: // 화성시
+                case 31: // 화성시 240
+                    regionCodeTail = "240";
                     break;
             }
         }
@@ -338,42 +392,61 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 거제시
+                case 1: // 거제시 090
+                    regionCodeTail = "090";
                     break;
-                case 2: // 거창군
+                case 2: // 거창군 590
+                    regionCodeTail = "590";
                     break;
-                case 3: // 고성군
+                case 3: // 고성군 540
+                    regionCodeTail = "540";
                     break;
-                case 4: // 김해시
+                case 4: // 김해시 070
+                    regionCodeTail = "070";
                     break;
-                case 5: // 남해군
+                case 5: // 남해군 550
+                    regionCodeTail = "550";
                     break;
-                case 6: // 밀양시
+                case 6: // 밀양시 080
+                    regionCodeTail = "080";
                     break;
-                case 7: // 사천시
+                case 7: // 사천시 060
+                    regionCodeTail = "060";
                     break;
-                case 8: // 산청군
+                case 8: // 산청군 570
+                    regionCodeTail = "570";
                     break;
-                case 9: // 양산시
+                case 9: // 양산시 100
+                    regionCodeTail = "100";
                     break;
-                case 10: // 의령군
+                case 10: // 의령군 510
+                    regionCodeTail = "510";
                     break;
-                case 11: // 진주시
+                case 11: // 진주시 030
+                    regionCodeTail = "030";
                     break;
-                case 12: // 창녕군
+                case 12: // 창녕군 530
+                    regionCodeTail = "530";
                     break;
-                case 13: // 창원시
+                case 13: // 창원시 110
+                    regionCodeTail = "110";
                     break;
-                case 14: // 통영시
+                case 14: // 통영시 050
+                    regionCodeTail = "050";
                     break;
-                case 15: // 하동군
+                case 15: // 하동군 560
+                    regionCodeTail = "560";
                     break;
-                case 16: // 함안군
+                case 16: // 함안군 520
+                    regionCodeTail = "520";
                     break;
-                case 17: // 함양군
+                case 17: // 함양군 580
+                    regionCodeTail = "580";
                     break;
-                case 18: // 합천군
+                case 18: // 합천군 600
+                    regionCodeTail = "600";
                     break;
             }
         }
@@ -389,52 +462,76 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 경산시
+                case 1: // 경산시 100
+                    regionCodeTail = "100";
                     break;
-                case 2: // 경주시
+                case 2: // 경주시 020
+                    regionCodeTail = "020";
                     break;
-                case 3: // 고령군
+                case 3: // 고령군 570
+                    regionCodeTail = "570";
                     break;
-                case 4: // 구미시
+                case 4: // 구미시 050
+                    regionCodeTail = "050";
                     break;
-                case 5: // 군위군
+                case 5: // 군위군 510
+                    regionCodeTail = "510";
                     break;
-                case 6: // 김천시
+                case 6: // 김천시 030
+                    regionCodeTail = "030";
                     break;
-                case 7: // 문경시
+                case 7: // 문경시 090
+                    regionCodeTail = "090";
                     break;
-                case 8: // 봉화군
+                case 8: // 봉화군 610
+                    regionCodeTail = "610";
                     break;
-                case 9: // 상주시
+                case 9: // 상주시 080
+                    regionCodeTail = "080";
                     break;
-                case 10: // 성주군
+                case 10: // 성주군 580
+                    regionCodeTail = "580";
                     break;
-                case 11: // 안동시
+                case 11: // 안동시 040
+                    regionCodeTail = "040";
                     break;
-                case 12: // 영덕군
+                case 12: // 영덕군 550
+                    regionCodeTail = "550";
                     break;
-                case 13: // 영양군
+                case 13: // 영양군 540
+                    regionCodeTail = "540";
                     break;
-                case 14: // 영주시
+                case 14: // 영주시 060
+                    regionCodeTail = "060";
                     break;
-                case 15: // 영천시
+                case 15: // 영천시 070
+                    regionCodeTail = "070";
                     break;
-                case 16: // 예천군
+                case 16: // 예천군 600
+                    regionCodeTail = "600";
                     break;
-                case 17: // 울릉군
+                case 17: // 울릉군 630
+                    regionCodeTail = "630";
                     break;
-                case 18: // 울진군
+                case 18: // 울진군 620
+                    regionCodeTail = "620";
                     break;
-                case 19: // 의성군
+                case 19: // 의성군 520
+                    regionCodeTail = "520";
                     break;
-                case 20: // 청도군
+                case 20: // 청도군 560
+                    regionCodeTail = "560";
                     break;
-                case 21: // 청송군
+                case 21: // 청송군 530
+                    regionCodeTail = "530";
                     break;
-                case 22: // 칠곡군
+                case 22: // 칠곡군 590
+                    regionCodeTail = "590";
                     break;
-                case 23: // 포항시
+                case 23: // 포항시 010
+                    regionCodeTail = "010";
                     break;
             }
         }
@@ -450,16 +547,22 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 광산구
+                case 1: // 광산구 050
+                    regionCodeTail = "050";
                     break;
-                case 2: // 남구
+                case 2: // 남구 030
+                    regionCodeTail = "030";
                     break;
-                case 3: // 동구
+                case 3: // 동구 010
+                    regionCodeTail = "010";
                     break;
-                case 4: // 북구
+                case 4: // 북구 040
+                    regionCodeTail = "040";
                     break;
-                case 5: // 서구
+                case 5: // 서구 020
+                    regionCodeTail = "020";
                     break;
             }
         }
@@ -475,22 +578,31 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 남구
+                case 1: // 남구 040
+                    regionCodeTail = "040";
                     break;
-                case 2: // 달서구
+                case 2: // 달서구 070
+                    regionCodeTail = "070";
                     break;
-                case 3: // 달성군
+                case 3: // 달성군 510
+                    regionCodeTail = "510";
                     break;
-                case 4: // 동구
+                case 4: // 동구 020
+                    regionCodeTail = "020";
                     break;
-                case 5: // 북구
+                case 5: // 북구 050
+                    regionCodeTail = "050";
                     break;
-                case 6: // 서구
+                case 6: // 서구 030
+                    regionCodeTail = "030";
                     break;
-                case 7: // 수성구
+                case 7: // 수성구 060
+                    regionCodeTail = "060";
                     break;
-                case 8: // 중구
+                case 8: // 중구 010
+                    regionCodeTail = "010";
                     break;
             }
         }
@@ -506,16 +618,22 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 대덕구
+                case 1: // 대덕구 050
+                    regionCodeTail = "050";
                     break;
-                case 2: // 동구
+                case 2: // 동구 010
+                    regionCodeTail = "010";
                     break;
-                case 3: // 서구
+                case 3: // 서구 030
+                    regionCodeTail = "030";
                     break;
-                case 4: // 유성구
+                case 4: // 유성구 040
+                    regionCodeTail = "040";
                     break;
-                case 5: // 중구
+                case 5: // 중구 020
+                    regionCodeTail = "020";
                     break;
             }
         }
@@ -531,38 +649,55 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 강서구
+                case 1: // 강서구 120
+                    regionCodeTail = "120";
                     break;
-                case 2: // 금정구
+                case 2: // 금정구 110
+                    regionCodeTail = "110";
                     break;
-                case 3: // 기장군
+                case 3: // 기장군 510
+                    regionCodeTail = "510";
                     break;
-                case 4: // 남구
+                case 4: // 남구 070
+                    regionCodeTail = "070";
                     break;
-                case 5: // 동구
+                case 5: // 동구 030
+                    regionCodeTail = "030";
                     break;
-                case 6: // 동래구
+                case 6: // 동래구 060
+                    regionCodeTail = "060";
                     break;
-                case 7: // 부산진구
+                case 7: // 부산진구 050
+                    regionCodeTail = "050";
                     break;
-                case 8: // 북구
+                case 8: // 북구 080
+                    regionCodeTail = "080";
                     break;
-                case 9: // 사상구
+                case 9: // 사상구 150
+                    regionCodeTail = "150";
                     break;
-                case 10: // 사하구
+                case 10: // 사하구 100
+                    regionCodeTail = "100";
                     break;
-                case 11: // 서구
+                case 11: // 서구 020
+                    regionCodeTail = "020";
                     break;
-                case 12: // 수영구
+                case 12: // 수영구 140
+                    regionCodeTail = "140";
                     break;
-                case 13: // 연제구
+                case 13: // 연제구 130
+                    regionCodeTail = "130";
                     break;
-                case 14: // 영도구
+                case 14: // 영도구 040
+                    regionCodeTail = "040";
                     break;
-                case 15: // 중구
+                case 15: // 중구 010
+                    regionCodeTail = "010";
                     break;
-                case 16: // 해운대구
+                case 16: // 해운대구 090
+                    regionCodeTail = "090";
                     break;
             }
         }
@@ -578,56 +713,82 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 강남구
+                case 1: // 강남구 230
+                    regionCodeTail = "230";
                     break;
-                case 2: // 강동구
+                case 2: // 강동구 250
+                    regionCodeTail = "250";
                     break;
-                case 3: // 강북구
+                case 3: // 강북구 090
+                    regionCodeTail = "090";
                     break;
-                case 4: // 강서구
+                case 4: // 강서구 160
+                    regionCodeTail = "160";
                     break;
-                case 5: // 관악구
+                case 5: // 관악구 210
+                    regionCodeTail = "210";
                     break;
-                case 6: // 광진구
+                case 6: // 광진구 050
+                    regionCodeTail = "050";
                     break;
-                case 7: // 구로구
+                case 7: // 구로구 170
+                    regionCodeTail = "170";
                     break;
-                case 8: // 금천구
+                case 8: // 금천구 180
+                    regionCodeTail = "180";
                     break;
-                case 9: // 노원구
+                case 9: // 노원구 110
+                    regionCodeTail = "110";
                     break;
-                case 10: // 도봉구
+                case 10: // 도봉구 100
+                    regionCodeTail = "100";
                     break;
-                case 11: // 동대문구
+                case 11: // 동대문구 060
+                    regionCodeTail = "060";
                     break;
-                case 12: // 동작구
+                case 12: // 동작구 200
+                    regionCodeTail = "200";
                     break;
                 case 13: // 마포구
+                    regionCodeTail = "140";
                     break;
-                case 14: // 서대문구
+                case 14: // 서대문구 130
+                    regionCodeTail = "130";
                     break;
-                case 15: // 서초구
+                case 15: // 서초구 220
+                    regionCodeTail = "220";
                     break;
-                case 16: // 성동구
+                case 16: // 성동구 040
+                    regionCodeTail = "040";
                     break;
-                case 17: // 성북구
+                case 17: // 성북구 080
+                    regionCodeTail = "080";
                     break;
-                case 18: // 송파구
+                case 18: // 송파구 240
+                    regionCodeTail = "240";
                     break;
-                case 19: // 양천구
+                case 19: // 양천구 150
+                    regionCodeTail = "150";
                     break;
-                case 20: // 영등포구
+                case 20: // 영등포구 190
+                    regionCodeTail = "190";
                     break;
-                case 21: // 용산구
+                case 21: // 용산구 030
+                    regionCodeTail = "030";
                     break;
-                case 22: // 은평구
+                case 22: // 은평구 120
+                    regionCodeTail = "120";
                     break;
-                case 23: // 종로구
+                case 23: // 종로구 010
+                    regionCodeTail = "010";
                     break;
-                case 24: // 중구
+                case 24: // 중구 020
+                    regionCodeTail = "020";
                     break;
-                case 25: // 중랑구
+                case 25: // 중랑구 070
+                    regionCodeTail = "070";
                     break;
             }
         }
@@ -643,6 +804,7 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 default: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
             }
         }
@@ -658,16 +820,22 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 남구
+                case 1: // 남구 020
+                    regionCodeTail = "020";
                     break;
-                case 2: // 동구
+                case 2: // 동구 030
+                    regionCodeTail = "030";
                     break;
-                case 3: // 북구
+                case 3: // 북구 040
+                    regionCodeTail = "040";
                     break;
-                case 4: // 울주군
+                case 4: // 울주군 510
+                    regionCodeTail = "510";
                     break;
-                case 5: // 중구
+                case 5: // 중구 010
+                    regionCodeTail = "010";
                     break;
             }
         }
@@ -683,26 +851,37 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 강화군
+                case 1: // 강화군 510
+                    regionCodeTail = "510";
                     break;
-                case 2: // 계양구
+                case 2: // 계양구 070
+                    regionCodeTail = "070";
                     break;
-                case 3: // 남동구
+                case 3: // 남동구 050
+                    regionCodeTail = "050";
                     break;
-                case 4: // 동구
+                case 4: // 동구 020
+                    regionCodeTail = "020";
                     break;
-                case 5: // 미추홀구
+                case 5: // 미추홀구 090
+                    regionCodeTail = "090";
                     break;
-                case 6: // 부평구
+                case 6: // 부평구 060
+                    regionCodeTail = "060";
                     break;
-                case 7: // 서구
+                case 7: // 서구 080
+                    regionCodeTail = "080";
                     break;
-                case 8: // 연수구
+                case 8: // 연수구 040
+                    regionCodeTail = "040";
                     break;
-                case 9: // 옹진군
+                case 9: // 옹진군 520
+                    regionCodeTail = "520";
                     break;
-                case 10: // 중구
+                case 10: // 중구 010
+                    regionCodeTail = "010";
                     break;
             }
         }
@@ -718,50 +897,73 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 강진군
+                case 1: // 강진군 590
+                    regionCodeTail = "590";
                     break;
-                case 2: // 고흥군
+                case 2: // 고흥군 550
+                    regionCodeTail = "550";
                     break;
-                case 3: // 곡성군
+                case 3: // 곡성군 520
+                    regionCodeTail = "520";
                     break;
-                case 4: // 광양시
+                case 4: // 광양시 060
+                    regionCodeTail = "060";
                     break;
-                case 5: // 구례군
+                case 5: // 구례군 530
+                    regionCodeTail = "530";
                     break;
-                case 6: // 나주시
+                case 6: // 나주시 040
+                    regionCodeTail = "040";
                     break;
-                case 7: // 담양군
+                case 7: // 담양군 510
+                    regionCodeTail = "510";
                     break;
-                case 8: // 목포시
+                case 8: // 목포시 010
+                    regionCodeTail = "010";
                     break;
-                case 9: // 무안군
+                case 9: // 무안군 620
+                    regionCodeTail = "620";
                     break;
-                case 10: // 보성군
+                case 10: // 보성군 560
+                    regionCodeTail = "560";
                     break;
-                case 11: // 순천시
+                case 11: // 순천시 030
+                    regionCodeTail = "030";
                     break;
-                case 12: // 신안군
+                case 12: // 신안군 680
+                    regionCodeTail = "680";
                     break;
-                case 13: // 여수시
+                case 13: // 여수시 020
+                    regionCodeTail = "020";
                     break;
-                case 14: // 영광군
+                case 14: // 영광군 640
+                    regionCodeTail = "640";
                     break;
-                case 15: // 영암군
+                case 15: // 영암군 610
+                    regionCodeTail = "610";
                     break;
-                case 16: // 완도군
+                case 16: // 완도군 660
+                    regionCodeTail = "660";
                     break;
-                case 17: // 장성군
+                case 17: // 장성군 650
+                    regionCodeTail = "650";
                     break;
-                case 18: // 장흥군
+                case 18: // 장흥군 580
+                    regionCodeTail = "580";
                     break;
-                case 19: // 진도군
+                case 19: // 진도군 670
+                    regionCodeTail = "670";
                     break;
-                case 20: // 함평군
+                case 20: // 함평군 630
+                    regionCodeTail = "630";
                     break;
-                case 21: // 해남군
+                case 21: // 해남군 600
+                    regionCodeTail = "600";
                     break;
-                case 22: // 화순군
+                case 22: // 화순군 570
+                    regionCodeTail = "570";
                     break;
             }
         }
@@ -777,34 +979,49 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 고창군
+                case 1: // 고창군 570
+                    regionCodeTail = "570";
                     break;
-                case 2: // 군산시
+                case 2: // 군산시 020
+                    regionCodeTail = "020";
                     break;
-                case 3: // 김제시
+                case 3: // 김제시 060
+                    regionCodeTail = "060";
                     break;
-                case 4: // 남원시
+                case 4: // 남원시 050
+                    regionCodeTail = "050";
                     break;
-                case 5: // 무주군
+                case 5: // 무주군 530
+                    regionCodeTail = "530";
                     break;
-                case 6: // 부안군
+                case 6: // 부안군 580
+                    regionCodeTail = "580";
                     break;
-                case 7: // 순창군
+                case 7: // 순창군 560
+                    regionCodeTail = "560";
                     break;
-                case 8: // 완주군
+                case 8: // 완주군 510
+                    regionCodeTail = "510";
                     break;
-                case 9: // 익산시
+                case 9: // 익산시 030
+                    regionCodeTail = "030";
                     break;
-                case 10: // 임실군
+                case 10: // 임실군 550
+                    regionCodeTail = "550";
                     break;
-                case 11: // 장수군
+                case 11: // 장수군 540
+                    regionCodeTail = "540";
                     break;
-                case 12: // 전주시
+                case 12: // 전주시 010
+                    regionCodeTail = "010";
                     break;
-                case 13: // 정읍시
+                case 13: // 정읍시 040
+                    regionCodeTail = "040";
                     break;
-                case 14: // 진안군
+                case 14: // 진안군 520
+                    regionCodeTail = "520";
                     break;
             }
         }
@@ -820,10 +1037,13 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 서귀포시
+                case 1: // 서귀포시 020
+                    regionCodeTail = "020";
                     break;
-                case 2: // 제주시
+                case 2: // 제주시 010
+                    regionCodeTail = "010";
                     break;
             }
         }
@@ -839,36 +1059,52 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 계룡시
+                case 1: // 계룡시 070
+                    regionCodeTail = "070";
                     break;
-                case 2: // 공주시
+                case 2: // 공주시 020
+                    regionCodeTail = "020";
                     break;
-                case 3: // 금산군
+                case 3: // 금산군 510
+                    regionCodeTail = "510";
                     break;
-                case 4: // 논산시
+                case 4: // 논산시 060
+                    regionCodeTail = "060";
                     break;
-                case 5: // 당진시
+                case 5: // 당진시 080
+                    regionCodeTail = "080";
                     break;
-                case 6: // 보령시
+                case 6: // 보령시 030
+                    regionCodeTail = "030";
                     break;
-                case 7: // 부여군
+                case 7: // 부여군 530
+                    regionCodeTail = "530";
                     break;
-                case 8: // 서산시
+                case 8: // 서산시 050
+                    regionCodeTail = "050";
                     break;
-                case 9: // 서천군
+                case 9: // 서천군 540
+                    regionCodeTail = "540";
                     break;
-                case 10: // 아산시
+                case 10: // 아산시 040
+                    regionCodeTail = "040";
                     break;
-                case 11: // 예산군
+                case 11: // 예산군 570
+                    regionCodeTail = "570";
                     break;
-                case 12: // 천안시
+                case 12: // 천안시 010
+                    regionCodeTail = "010";
                     break;
-                case 13: // 청양군
+                case 13: // 청양군 550
+                    regionCodeTail = "550";
                     break;
-                case 14: // 태안군
+                case 14: // 태안군 580
+                    regionCodeTail = "580";
                     break;
-                case 15: // 홍성군
+                case 15: // 홍성군 560
+                    regionCodeTail = "560";
                     break;
             }
         }
@@ -884,28 +1120,40 @@ public class SubscriptionFilterFragment extends Fragment {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0: // 전체
+                    regionCodeTail = "*"; // Query 할 때 전체검색 해야 함
                     break;
-                case 1: // 괴산군
+                case 1: // 괴산군 560
+                    regionCodeTail = "560";
                     break;
-                case 2: // 단양군
+                case 2: // 단양군 580
+                    regionCodeTail = "580";
                     break;
-                case 3: // 보은군
+                case 3: // 보은군 520
+                    regionCodeTail = "520";
                     break;
-                case 4: // 영동군
+                case 4: // 영동군 540
+                    regionCodeTail = "540";
                     break;
-                case 5: // 옥천군
+                case 5: // 옥천군 530
+                    regionCodeTail = "530";
                     break;
-                case 6: // 음성군
+                case 6: // 음성군 570
+                    regionCodeTail = "570";
                     break;
-                case 7: // 제천시
+                case 7: // 제천시 030
+                    regionCodeTail = "030";
                     break;
-                case 8: // 증평군
+                case 8: // 증평군 590
+                    regionCodeTail = "590";
                     break;
-                case 9: // 진천군
+                case 9: // 진천군 550
+                    regionCodeTail = "550";
                     break;
-                case 10: // 청주시
+                case 10: // 청주시 040
+                    regionCodeTail = "040";
                     break;
-                case 11: // 충주시
+                case 11: // 충주시 020
+                    regionCodeTail = "020";
                     break;
             }
         }
