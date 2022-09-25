@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -23,6 +24,11 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -31,7 +37,6 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class StatisticsFragment extends Fragment {
-    private int count; // 파일 입출력 통해 받을 값(읽은 책 수)
     ArrayList<BarEntry> bookGraphDataEntries = new ArrayList<>();
     TextView countView;
     MainActivity mainAct;
@@ -54,23 +59,42 @@ public class StatisticsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /// Test Data Start
-        count = 1257;
-        bookGraphDataEntries.clear();
-        bookGraphDataEntries.add(new BarEntry(0, 100));
-        bookGraphDataEntries.add(new BarEntry(1, 200));
-        bookGraphDataEntries.add(new BarEntry(2, 50));
-        bookGraphDataEntries.add(new BarEntry(3, 30));
-        bookGraphDataEntries.add(new BarEntry(4, 33));
-        bookGraphDataEntries.add(new BarEntry(5, 81));
-        bookGraphDataEntries.add(new BarEntry(6, 130));
-        bookGraphDataEntries.add(new BarEntry(7, 83));
-        bookGraphDataEntries.add(new BarEntry(8, 350));
-        bookGraphDataEntries.add(new BarEntry(9, 200));
+        // File I/O Start
+        String filepath = new String(getActivity().getFilesDir().toString() + "/stastics");
+        File statDir = new File(filepath);
+        // 하위폴더 미존재시 생성
+        if(!statDir.exists()) {
+            statDir.mkdir();
+        }
+
+        File statFile = new File(statDir + "/StatisticsFile.txt");
+        // 파일 미존재시 생성(통계데이터 0으로 초기화)
+        if(!statFile.exists()) {
+            try {
+                statFile.createNewFile();
+                FileWriter fw = new FileWriter(statFile);
+                fw.write("0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n");
+                fw.flush();
+                fw.close();
+            } catch (IOException e) {
+                System.out.println (e.toString());
+            }
+        }
+
+        try { // 파일 읽어오기
+            BufferedReader fr = new BufferedReader(new FileReader(statFile));
+
+            for(int i = 0; i < 10; ++i) {
+                ((MainActivity)getActivity()).statisticsData.data[i] = Integer.parseInt(fr.readLine());
+            }
+            ((MainActivity)getActivity()).statisticsData.totalNumUpdate();
+
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
 
         /// Test Data End
         if (getArguments() != null) {
-            count = 4896; // TODO: 여기서 파일입출력으로 읽은 책의 수를 받아옴
         }
     }
 
@@ -80,12 +104,26 @@ public class StatisticsFragment extends Fragment {
         // onCreate() 에서 받은 값들로 화면을 구성하는 함수
         ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_statistics, container, false);
         countView = rootView.findViewById(R.id.textCountView);
-        countView.setText(Integer.toString(count));
+        countView.setText(Integer.toString(((MainActivity)getActivity()).statisticsData.totalNum));
         countView.setOnClickListener(addBookListener);
 
         bookGraph = rootView.findViewById(R.id.bookGraph);
 
+        // 읽어 온 데이터로 그래프 생성
+        bookGraphDataEntries.clear();
+        bookGraphDataEntries.add(new BarEntry(0, ((MainActivity)getActivity()).statisticsData.data[0]));
+        bookGraphDataEntries.add(new BarEntry(1, ((MainActivity)getActivity()).statisticsData.data[1]));
+        bookGraphDataEntries.add(new BarEntry(2, ((MainActivity)getActivity()).statisticsData.data[2]));
+        bookGraphDataEntries.add(new BarEntry(3, ((MainActivity)getActivity()).statisticsData.data[3]));
+        bookGraphDataEntries.add(new BarEntry(4, ((MainActivity)getActivity()).statisticsData.data[4]));
+        bookGraphDataEntries.add(new BarEntry(5, ((MainActivity)getActivity()).statisticsData.data[5]));
+        bookGraphDataEntries.add(new BarEntry(6, ((MainActivity)getActivity()).statisticsData.data[6]));
+        bookGraphDataEntries.add(new BarEntry(7, ((MainActivity)getActivity()).statisticsData.data[7]));
+        bookGraphDataEntries.add(new BarEntry(8, ((MainActivity)getActivity()).statisticsData.data[8]));
+        bookGraphDataEntries.add(new BarEntry(9, ((MainActivity)getActivity()).statisticsData.data[9]));
+
         setGraphStyle();
+        bookGraph.invalidate();
 
         return rootView;
     }
@@ -96,6 +134,12 @@ public class StatisticsFragment extends Fragment {
 
         mainAct = (MainActivity)getActivity();
     }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        bookGraph.invalidate();
+//    }
 
     @Override
     public void onDetach() {
@@ -116,6 +160,12 @@ public class StatisticsFragment extends Fragment {
         bookGraphDataset.setColor(Color.parseColor("#99FFCC"));
         bookGraphDataset.setValueTextColor(Color.BLACK);
         bookGraphDataset.setValueTextSize(16f);
+        bookGraphDataset.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float data) {
+                return String.format("%d", (int)data);
+            }
+        });
 
         BarData bookGraphData = new BarData(bookGraphDataset);
 

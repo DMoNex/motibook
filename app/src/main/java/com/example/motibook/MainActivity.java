@@ -35,7 +35,14 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    public StatisticsData statisticsData;
     Toolbar toolbar;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -73,6 +80,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Login
         signIn();
         /// Google Login API End
+
+        String filepath = new String(this.getFilesDir().toString() + "/stastics");
+        File statDir = new File(filepath);
+        // 하위폴더 미존재시 생성
+        if(!statDir.exists()) {
+            statDir.mkdir();
+        }
+        // 파일 미존재시 생성 후 통계데이터 0으로 초기화
+        File statFile = new File(statDir + "/StatisticsFile.txt");
+        if(!statFile.exists()) {
+            try {
+                statFile.createNewFile();
+                FileWriter fw = new FileWriter(statFile);
+                fw.write("0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n");
+                fw.flush();
+                fw.close();
+            } catch (IOException e) {
+            }
+        }
+
+        // 파일 읽기
+        try {
+            BufferedReader fr = new BufferedReader(new FileReader(statFile));
+            statisticsData = new StatisticsData(
+                    Integer.parseInt(fr.readLine()), // 0
+                    Integer.parseInt(fr.readLine()), // 1
+                    Integer.parseInt(fr.readLine()), // 2
+                    Integer.parseInt(fr.readLine()), // 3
+                    Integer.parseInt(fr.readLine()), // 4
+                    Integer.parseInt(fr.readLine()), // 5
+                    Integer.parseInt(fr.readLine()), // 6
+                    Integer.parseInt(fr.readLine()), // 7
+                    Integer.parseInt(fr.readLine()), // 8
+                    Integer.parseInt(fr.readLine())); // 9
+        } catch(IOException e) {
+        }
+
     }
 
     private void signIn() {

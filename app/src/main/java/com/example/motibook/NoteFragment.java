@@ -25,7 +25,7 @@ import java.util.ArrayList;
  * Use the {@link NoteFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NoteFragment extends Fragment {
+public class NoteFragment extends Fragment implements OnBackPressedListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -173,4 +173,10 @@ public class NoteFragment extends Fragment {
             // 파일 생성 화면 띄우기
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        MainActivity activity = (MainActivity) getActivity();
+        activity.FragmentView(1);
+    }
 }

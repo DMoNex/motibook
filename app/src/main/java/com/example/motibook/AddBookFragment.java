@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,16 @@ import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -100,7 +111,46 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
 
             }
             //Test Line
-            Toast.makeText(getActivity(), "검색어 = "+query, Toast.LENGTH_LONG).show();
+            //검색 결과 받아왔다고 가정. 일단 800번(문학)이라고 가정함
+            int dataIndex = 8;
+            int data = ((MainActivity)getActivity()).statisticsData.data[dataIndex] + 1;
+            ((MainActivity)getActivity()).statisticsData.data[dataIndex] += 1;
+            ((MainActivity)getActivity()).statisticsData.totalNumUpdate();
+
+            String filepath = new String(getActivity().getFilesDir().toString() + "/stastics");
+            File statDir = new File(filepath);
+            // 하위폴더 미존재시 생성
+            if(!statDir.exists()) {
+                statDir.mkdir();
+            }
+            File statFile = new File(statDir + "/StatisticsFile.txt");
+            // 파일 존재시 삭제 후 재생성
+//            if(statFile.exists()) {
+//                statFile.delete();
+//            }
+
+            try {
+                statFile.createNewFile();
+                FileWriter fw = new FileWriter(statFile);
+                fw.write(String.format("%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n",
+                        ((MainActivity)getActivity()).statisticsData.data[0],
+                        ((MainActivity)getActivity()).statisticsData.data[1],
+                        ((MainActivity)getActivity()).statisticsData.data[2],
+                        ((MainActivity)getActivity()).statisticsData.data[3],
+                        ((MainActivity)getActivity()).statisticsData.data[4],
+                        ((MainActivity)getActivity()).statisticsData.data[5],
+                        ((MainActivity)getActivity()).statisticsData.data[6],
+                        ((MainActivity)getActivity()).statisticsData.data[7],
+                        ((MainActivity)getActivity()).statisticsData.data[8],
+                        ((MainActivity)getActivity()).statisticsData.data[9]));
+                fw.flush();
+                fw.close();
+            } catch (IOException e) {
+                System.out.println (e.toString());
+            }
+
+            Toast.makeText(getActivity(), String.format("파일생성 %d", ((MainActivity)getActivity()).statisticsData.totalNum), Toast.LENGTH_LONG).show();
+
             return true;
         }
 
