@@ -1,9 +1,16 @@
 package com.example.motibook;
 
+import android.Manifest;
+import android.app.Dialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +18,29 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.ExponentialBackOff;
+import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.calendar.model.Calendar;
+import com.google.api.services.calendar.model.CalendarList;
+import com.google.api.services.calendar.model.CalendarListEntry;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class SubscriptionFilterFragment extends Fragment {
 
@@ -23,8 +53,28 @@ public class SubscriptionFilterFragment extends Fragment {
     String regionCodeHead;
     String regionCodeTail;
 
+    GoogleAccountCredential mCredential;
+    MainActivity parents;
+    static final int REQUEST_ACCOUNT_PICKER = 1000;
+    static final int REQUEST_AUTHORIZATION = 1001;
+    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
+    static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
+
+    private static final String PREF_ACCOUNT_NAME = "accountName";
+    private static final String[] SCOPES = {CalendarScopes.CALENDAR};
+
+    /**
+     * Google Calendar API에 접근하기 위해 사용되는 구글 캘린더 API 서비스 객체
+     */
+    private com.google.api.services.calendar.Calendar mService = null;
+
     public SubscriptionFilterFragment() {
         // Required empty public constructor
+    }
+
+    public SubscriptionFilterFragment(MainActivity main) {
+        // Required empty public constructor
+        parents = main;
     }
 
     public static SubscriptionFilterFragment newInstance(String param1, String param2) {
@@ -40,7 +90,206 @@ public class SubscriptionFilterFragment extends Fragment {
         if (getArguments() != null) {
 
         }
+
+
+        mCredential = GoogleAccountCredential.usingOAuth2(
+                getActivity().getApplicationContext(),
+                Arrays.asList(SCOPES)
+        ).setBackOff(new ExponentialBackOff());
+
+        getResultsFromApi();
     }
+
+    private String getResultsFromApi() {
+
+        if (!isGooglePlayServicesAvailable()) { // Google Play Services를 사용할 수 없는 경우
+
+            acquireGooglePlayServices();
+        } else if (mCredential.getSelectedAccountName() == null) { // 유효한 Google 계정이 선택되어 있지 않은 경우
+
+            chooseAccount();
+        } else if (!isDeviceOnline()) {    // 인터넷을 사용할 수 없는 경우
+
+            Toast.makeText(parents, "인터넷을 먼저 연결해주세요.", Toast.LENGTH_SHORT).show();
+        } else {
+
+            HttpTransport transport = AndroidHttp.newCompatibleTransport();
+            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+
+            // Google Calendar API 호출
+            mService = new com.google.api.services.calendar.Calendar
+                    .Builder(transport, jsonFactory, mCredential)
+                    .setApplicationName("Google Calendar API Android Quickstart")
+                    .build();
+
+            Toast.makeText(parents, parents.acc.getEmail() + " 계정의 Google Calendar에 연결되었습니다.", Toast.LENGTH_SHORT).show();
+        }
+
+        try {
+            createCalendar();
+        }
+        catch (IOException e) {
+            Toast.makeText(parents, e.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+        return null;
+    }
+
+    /*
+     * 선택되어 있는 Google 계정에 새 캘린더를 추가한다.
+     */
+    private String createCalendar() throws IOException {
+
+        String ids = getCalendarID("Motibook");
+
+        if ( ids != null ){
+            return "이미 캘린더가 생성되어 있습니다. ";
+        }
+
+        // 새로운 캘린더 생성
+        com.google.api.services.calendar.model.Calendar calendar = new Calendar();
+        // 캘린더의 제목 설정
+        calendar.setSummary("Motibook");
+        // 캘린더의 시간대 설정
+        calendar.setTimeZone("Asia/Seoul");
+        // 구글 캘린더에 새로 만든 캘린더를 추가
+        Calendar createdCalendar = mService.calendars().insert(calendar).execute();
+        // 추가한 캘린더의 ID를 가져옴.
+        String calendarId = createdCalendar.getId();
+        // 구글 캘린더의 캘린더 목록에서 새로 만든 캘린더를 검색
+        CalendarListEntry calendarListEntry = mService.calendarList().get(calendarId).execute();
+        // 캘린더의 배경색을 파란색으로 표시  RGB
+        calendarListEntry.setBackgroundColor("#0000ff");
+        // 변경한 내용을 구글 캘린더에 반영
+        CalendarListEntry updatedCalendarListEntry =
+                mService.calendarList()
+                        .update(calendarListEntry.getId(), calendarListEntry)
+                        .setColorRgbFormat(true)
+                        .execute();
+        // 새로 추가한 캘린더의 ID를 리턴
+        return "캘린더가 생성되었습니다.";
+    }
+
+    /*
+     * 캘린더 이름에 대응하는 캘린더 ID를 리턴
+     */
+    private String getCalendarID(String calendarTitle){
+
+        String id = null;
+
+        // Iterate through entries in calendar list
+        String pageToken = null;
+        do {
+
+            CalendarList calendarList = null;
+
+            try {
+                calendarList = mService.calendarList().list().setPageToken(pageToken).execute();
+            } catch (UserRecoverableAuthIOException e) {
+                // 사용하지 않는 함수임으로 수정 필요
+                startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
+            }catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+            }
+            List<CalendarListEntry> items = calendarList.getItems();
+
+
+            for (CalendarListEntry calendarListEntry : items) {
+
+                if ( calendarListEntry.getSummary().toString().equals(calendarTitle)) {
+
+                    id = calendarListEntry.getId().toString();
+                }
+            }
+            pageToken = calendarList.getNextPageToken();
+        } while (pageToken != null);
+
+        return id;
+    }
+
+
+
+    /**
+     * 안드로이드 디바이스에 최신 버전의 Google Play Services가 설치되어 있는지 확인
+     */
+    private boolean isGooglePlayServicesAvailable() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        final int connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(parents);
+        return connectionStatusCode == ConnectionResult.SUCCESS;
+    }
+
+    /*
+     * Google Play Services 업데이트로 해결가능하다면 사용자가 최신 버전으로 업데이트하도록 유도하기위해
+     * 대화상자를 보여줌.
+     */
+    private void acquireGooglePlayServices() {
+
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        final int connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(parents);
+        if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
+            showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
+        }
+    }
+
+    /*
+     * 안드로이드 디바이스에 Google Play Services가 설치 안되어 있거나 오래된 버전인 경우 보여주는 대화상자
+     */
+    void showGooglePlayServicesAvailabilityErrorDialog(
+            final int connectionStatusCode
+    ) {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        Dialog dialog = apiAvailability.getErrorDialog(
+                parents,
+                connectionStatusCode,
+                REQUEST_GOOGLE_PLAY_SERVICES
+        );
+        dialog.show();
+    }
+
+    /*
+     * Google Calendar API의 자격 증명( credentials ) 에 사용할 구글 계정을 설정한다.
+     *
+     * 전에 사용자가 구글 계정을 선택한 적이 없다면 다이얼로그에서 사용자를 선택하도록 한다.
+     * GET_ACCOUNTS 퍼미션이 필요하다.
+     */
+    @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
+    private void chooseAccount() {
+
+        // GET_ACCOUNTS 권한을 가지고 있다면
+        if (EasyPermissions.hasPermissions(parents, Manifest.permission.GET_ACCOUNTS)) {
+
+            // MainActivity 에서 로그인한 정보를 가져온다.
+            String accountName = parents.acc.getEmail();
+            if (parents.acc != null && accountName != null) {
+
+                // 선택된 구글 계정 이름으로 설정한다.
+                mCredential.setSelectedAccountName(accountName);
+                getResultsFromApi();
+            }
+
+            // GET_ACCOUNTS 권한을 가지고 있지 않다면
+        } else {
+            // 사용자에게 GET_ACCOUNTS 권한을 요구하는 다이얼로그를 보여준다.(주소록 권한 요청함)
+            EasyPermissions.requestPermissions(
+                    parents,
+                    "This app needs to access your Google account (via Contacts).",
+                    REQUEST_PERMISSION_GET_ACCOUNTS,
+                    Manifest.permission.GET_ACCOUNTS);
+        }
+    }
+
+    /*
+     * 안드로이드 디바이스가 인터넷 연결되어 있는지 확인한다. 연결되어 있다면 True 리턴, 아니면 False 리턴
+     */
+    private boolean isDeviceOnline() {
+
+        ConnectivityManager connMgr = (ConnectivityManager) parents.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        return (networkInfo != null && networkInfo.isConnected());
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

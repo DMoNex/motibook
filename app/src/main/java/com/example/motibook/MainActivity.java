@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.identity.GetSignInIntentRequest;
 import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -49,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     GoogleSignInClient mGoogleSignInClient;
+    GoogleSignInAccount acc;
+
     private static final String TAG = "MainActivity";
     private final int RC_SIGN_IN = 123;
 
@@ -134,19 +137,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
                         try {
                             //Google Login Succeed
-                            GoogleSignInAccount account = task.getResult(ApiException.class);
-                            Log.d("LOGIN", "firebaseAuthWithGoogle:" + account.getId());
+                            acc = task.getResult(ApiException.class);
+                            Log.d("LOGIN", "firebaseAuthWithGoogle:" + acc.getId());
 
                             // 사용자 이름 받아와 출력
                             TextView nameView = (TextView) findViewById(R.id.namecard_name);
-                            nameView.setText(account.getDisplayName());
+                            nameView.setText(acc.getDisplayName());
 
                             // 사용자 Email 받아와 출력
                             TextView emailView = (TextView) findViewById(R.id.namecard_mail);
-                            emailView.setText(account.getEmail());
+                            emailView.setText(acc.getEmail());
 
                             // 사용자 프로필 아이콘 받아와 출력
                             ImageView imageView = (ImageView) findViewById(R.id.namecard_image);
+                            Glide.with(this).load(acc.getPhotoUrl()).into(imageView);
 
                         } catch (ApiException e) {
 
@@ -174,9 +178,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case 3:
 //                GoogleCalenderFragment calenderFragment = new GoogleCalenderFragment();
-                SubscriptionFilterFragment subscriptionFilterFragment = new SubscriptionFilterFragment();
-                transaction.replace(R.id.Screen, subscriptionFilterFragment);
 //                transaction.replace(R.id.Screen, calenderFragment);
+                SubscriptionFilterFragment subscriptionFilterFragment = new SubscriptionFilterFragment(MainActivity.this);
+                transaction.replace(R.id.Screen, subscriptionFilterFragment);
                 transaction.commit();
                 break;
         }
