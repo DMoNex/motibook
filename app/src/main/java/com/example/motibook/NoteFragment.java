@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -34,7 +35,6 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
     private SearchView noteSearch;
     private RecyclerView noteList;
     private ArrayList<NoteListItem> noteListItems;
-    private FloatingActionButton noteAddButton;
     int noteSearchFlag = 0;
 
     // Search 에서 호출하기 위해 여기에 선언
@@ -83,8 +83,6 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
         noteSearch = (SearchView) rootView.findViewById(R.id.noteSearchView);
         // noteList 멤버는 RecyclerView noteSearchListView 임
         noteList = (RecyclerView) rootView.findViewById(R.id.noteSearchListView);
-        // noteAddButton 멤버는 FloatingActionButton noteAddButton 임
-        noteAddButton = (FloatingActionButton) rootView.findViewById(R.id.noteAddButton);
 
         //Filter 항목을 준비한 Array 와 연결해줄 Adapter
         ArrayAdapter<CharSequence> noteFilterAdapter = ArrayAdapter.createFromResource(
@@ -103,7 +101,6 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
         // 여러가지 Listener 설정
         filter.setOnItemSelectedListener(noteFilterListener);
         noteSearch.setOnQueryTextListener(noteSearchListener);
-        noteAddButton.setOnClickListener(noteAddButtonListener);
 
         return rootView;
     }
@@ -132,6 +129,8 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
     SearchView.OnQueryTextListener noteSearchListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
+            String noteDir = new String(getActivity().getFilesDir().toString() + "/notes");
+            String noteFiles[] = new File(noteDir).list();
             // TODO: query 받아 검색
             if(noteSearchFlag == 0) { // 제목 검색인 경우
 
@@ -141,16 +140,10 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
             }
             /// For Test Start
             noteListItems.clear();
-            noteListItems.add(new NoteListItem("1000000000001", "xxjg48ghag"));
-            noteListItems.add(new NoteListItem("1000000000002", "8yzwktapad"));
-            noteListItems.add(new NoteListItem("1000000000003", "hsc73iajdn"));
-            noteListItems.add(new NoteListItem("1000000000004", "mz6rby2bhl"));
-            noteListItems.add(new NoteListItem("1000000000005", "pi2tkk69fw"));
-            noteListItems.add(new NoteListItem("1000000000006", "u7k58rjubo"));
-            noteListItems.add(new NoteListItem("1000000000007", "bxmu5yvwgw"));
-            noteListItems.add(new NoteListItem("1000000000008", "l5osx6m00j"));
-            noteListItems.add(new NoteListItem("1000000000009", "0k05embc8r"));
-            noteListItems.add(new NoteListItem("1000000000010", "y1rqccos64"));
+            for(int i = 0; i < noteFiles.length; ++i) {
+                String[] tmpArr = noteFiles[i].split("#&#");
+                noteListItems.add(new NoteListItem(tmpArr[0], tmpArr[1].substring(0, tmpArr[1].length()-4)));
+            }
 
             Toast.makeText(getActivity(), "검색어 = "+query, Toast.LENGTH_LONG).show();
             /// For Test End
@@ -164,13 +157,6 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
         @Override
         public boolean onQueryTextChange(String newText) {
             return false;
-        }
-    };
-
-    View.OnClickListener noteAddButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            // 파일 생성 화면 띄우기
         }
     };
 

@@ -111,45 +111,64 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
 
             }
             //Test Line
-            //검색 결과 받아왔다고 가정. 일단 800번(문학)이라고 가정함
+            //검색 결과 받아왔다고 가정. 일단 800번(문학)이며, ISBN 0000000000800이라고 가정함
+            String ISBN = "0000000000800";
+            String bookName = "aaaa";
             int dataIndex = 8;
             int data = ((MainActivity)getActivity()).statisticsData.data[dataIndex] + 1;
             ((MainActivity)getActivity()).statisticsData.data[dataIndex] += 1;
             ((MainActivity)getActivity()).statisticsData.totalNumUpdate();
 
-            String filepath = new String(getActivity().getFilesDir().toString() + "/stastics");
-            File statDir = new File(filepath);
-            // 하위폴더 미존재시 생성
-            if(!statDir.exists()) {
-                statDir.mkdir();
+            String notepath = new String(getActivity().getFilesDir().toString() + "/notes");
+            File noteDir = new File(notepath);
+            if(!noteDir.exists()) {
+                noteDir.mkdir();
             }
-            File statFile = new File(statDir + "/StatisticsFile.txt");
-            // 파일 존재시 삭제 후 재생성
-//            if(statFile.exists()) {
-//                statFile.delete();
-//            }
+            File noteFile = new File(noteDir + "/" + ISBN + "#&#" + bookName + ".txt");
 
-            try {
-                statFile.createNewFile();
-                FileWriter fw = new FileWriter(statFile);
-                fw.write(String.format("%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n",
-                        ((MainActivity)getActivity()).statisticsData.data[0],
-                        ((MainActivity)getActivity()).statisticsData.data[1],
-                        ((MainActivity)getActivity()).statisticsData.data[2],
-                        ((MainActivity)getActivity()).statisticsData.data[3],
-                        ((MainActivity)getActivity()).statisticsData.data[4],
-                        ((MainActivity)getActivity()).statisticsData.data[5],
-                        ((MainActivity)getActivity()).statisticsData.data[6],
-                        ((MainActivity)getActivity()).statisticsData.data[7],
-                        ((MainActivity)getActivity()).statisticsData.data[8],
-                        ((MainActivity)getActivity()).statisticsData.data[9]));
-                fw.flush();
-                fw.close();
-            } catch (IOException e) {
-                System.out.println (e.toString());
+            // noteFile이 존재한다면 이미 추가했던 책이므로 아무 동작도 하지 않아야 함
+            if(noteFile.exists()) {
+                Toast.makeText(getActivity(), String.format("이미 등록된 도서입니다."), Toast.LENGTH_LONG).show();
+            }
+            else { // noteFile.txt 생성 (empty)
+                try {
+                    noteFile.createNewFile();
+                } catch (IOException e) {
+                    System.out.println (e.toString());
+                }
+
+                String filepath = new String(getActivity().getFilesDir().toString() + "/stastics");
+                File statDir = new File(filepath);
+                // 하위폴더 미존재시 생성
+                if(!statDir.exists()) {
+                    statDir.mkdir();
+                }
+                File statFile = new File(statDir + "/StatisticsFile.txt");
+
+                try {
+                    statFile.createNewFile();
+                    FileWriter fw = new FileWriter(statFile);
+                    fw.write(String.format("%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n",
+                            ((MainActivity)getActivity()).statisticsData.data[0],
+                            ((MainActivity)getActivity()).statisticsData.data[1],
+                            ((MainActivity)getActivity()).statisticsData.data[2],
+                            ((MainActivity)getActivity()).statisticsData.data[3],
+                            ((MainActivity)getActivity()).statisticsData.data[4],
+                            ((MainActivity)getActivity()).statisticsData.data[5],
+                            ((MainActivity)getActivity()).statisticsData.data[6],
+                            ((MainActivity)getActivity()).statisticsData.data[7],
+                            ((MainActivity)getActivity()).statisticsData.data[8],
+                            ((MainActivity)getActivity()).statisticsData.data[9]));
+                    fw.flush();
+                    fw.close();
+                } catch (IOException e) {
+                    System.out.println (e.toString());
+                }
+
+                Toast.makeText(getActivity(), String.format("파일생성 %d", ((MainActivity)getActivity()).statisticsData.totalNum), Toast.LENGTH_LONG).show();
+
             }
 
-            Toast.makeText(getActivity(), String.format("파일생성 %d", ((MainActivity)getActivity()).statisticsData.totalNum), Toast.LENGTH_LONG).show();
 
             return true;
         }
