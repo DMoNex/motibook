@@ -1,7 +1,9 @@
 package com.example.motibook;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,15 +29,12 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class NoteFragment extends Fragment implements OnBackPressedListener {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
     private Spinner filter;
     private SearchView noteSearch;
     private RecyclerView noteList;
     private ArrayList<NoteListItem> noteListItems;
     int noteSearchFlag = 0;
+    MainActivity mainAct;
 
     // Search 에서 호출하기 위해 여기에 선언
     NoteListItemAdapter noteListItemAdapter;
@@ -44,15 +43,20 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment NoteFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        mainAct = (MainActivity)getActivity();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        mainAct = null;
+    }
+
     public static NoteFragment newInstance(String param1, String param2) {
         NoteFragment fragment = new NoteFragment();
         Bundle args = new Bundle();
@@ -92,15 +96,36 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
         // noteList Manager 지정
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
         noteList.setLayoutManager(linearLayoutManager);
-        // noteList 항목을 Array 와 연결해줄 Adapter 생성
+        // noteList 항목을 Array 와 연결해줄 Adapter 생성 & Listener 설정
         noteListItemAdapter = new NoteListItemAdapter(noteListItems);
-        noteList.setAdapter(noteListItemAdapter);
+        noteListItemAdapter.setOnItemClickListener(new NoteListItemAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int pos) {
+                String notePath = new String(getActivity().getFilesDir().toString() + "/notes");
+                File noteDir = new File(notePath);
+                if(!noteDir.exists()) {
+                    noteDir.mkdir();
+                }
+
+                File noteFile = new File(noteDir + "/" + noteListItems.get(pos).getISBN() + "#&#" + noteListItems.get(pos).getBookName() + ".txt");
+                if(noteFile.exists()) {
+                    // TXT 편집 화면으로 이동
+                    mainAct.onAddNoteFragment(noteDir + "/" + noteListItems.get(pos).getISBN() + "#&#" + noteListItems.get(pos).getBookName() + ".txt");
+                }
+
+            }
+        });
         // filter 와 Adapter 연결
         filter.setAdapter(noteFilterAdapter);
+        // noteList 와 Adapter 연결
+        noteList.setAdapter(noteListItemAdapter);
 
         // 여러가지 Listener 설정
         filter.setOnItemSelectedListener(noteFilterListener);
         noteSearch.setOnQueryTextListener(noteSearchListener);
+
+
+        noteSearchListener.onQueryTextSubmit("");
 
         return rootView;
     }

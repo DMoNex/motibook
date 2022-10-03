@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Toolbar toolbar;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
+    String lastFilePath;
 
 
     GoogleSignInClient mGoogleSignInClient;
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         signIn();
         /// Google Login API End
 
+        // Statistics Data Setting
         String filepath = new String(this.getFilesDir().toString() + "/stastics");
         File statDir = new File(filepath);
         // 하위폴더 미존재시 생성
@@ -220,4 +222,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         transaction.commit();
     }
 
+    public void setLastFilePath(String str) {
+        lastFilePath = str;
+    }
+
+    public String getLastFilePath() {
+        return lastFilePath;
+    }
+
+    public void onAddNoteFragment(String path) {
+        lastFilePath = path;
+        AddNoteFragment addNoteFragment = new AddNoteFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.Screen, addNoteFragment);
+        transaction.commit();
+    }
 }
