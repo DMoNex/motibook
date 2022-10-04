@@ -170,7 +170,7 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
                 noteListItems.add(new NoteListItem(tmpArr[0], tmpArr[1].substring(0, tmpArr[1].length()-4)));
             }
 
-            Toast.makeText(getActivity(), "검색어 = "+query, Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "검색어 = "+query, Toast.LENGTH_SHORT).show();
             /// For Test End
 
             // noteSearchListView 갱신
