@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 
 /**
@@ -156,18 +157,21 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
         public boolean onQueryTextSubmit(String query) {
             String noteDir = new String(getActivity().getFilesDir().toString() + "/notes");
             String noteFiles[] = new File(noteDir).list();
-            // TODO: query 받아 검색
-            if(noteSearchFlag == 0) { // 제목 검색인 경우
 
-            }
-            else if (noteSearchFlag == 1) { // ISBN 검색인 경우
-
-            }
             /// For Test Start
             noteListItems.clear();
             for(int i = 0; i < noteFiles.length; ++i) {
                 String[] tmpArr = noteFiles[i].split("#&#");
-                noteListItems.add(new NoteListItem(tmpArr[0], tmpArr[1].substring(0, tmpArr[1].length()-4)));
+                if(noteSearchFlag == 0) { // 제목 검색인 경우
+                    if (tmpArr[1].substring(0, tmpArr[1].length()-4).contains(query)) {
+                        noteListItems.add(new NoteListItem(tmpArr[0], tmpArr[1].substring(0, tmpArr[1].length()-4)));
+                    }
+                }
+                else if (noteSearchFlag == 1) { // ISBN 검색인 경우
+                    if (tmpArr[0].contains(query)) {
+                        noteListItems.add(new NoteListItem(tmpArr[0], tmpArr[1].substring(0, tmpArr[1].length()-4)));
+                    }
+                }
             }
 
             Toast.makeText(getActivity(), "검색어 = "+query, Toast.LENGTH_SHORT).show();
