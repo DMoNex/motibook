@@ -13,8 +13,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -75,13 +78,23 @@ public class AddNoteFragment extends Fragment implements OnBackPressedListener {
         fileName = (TextView)rootView.findViewById(R.id.noteName);
         fileName.setText(fileNameString);
 
-        //Toast.makeText((MainActivity)getActivity(), "Finding File", Toast.LENGTH_SHORT).show();
+        // contents 는 본문 EditText
+        contents = (EditText)rootView.findViewById(R.id.TextEditor);
 
         // Filepath 이용하여 txt 파일 열기
         File txtFile = new File(mainAct.getLastFilePath());
         if(txtFile.exists()) {
-            Toast.makeText(getActivity(), "Find File", Toast.LENGTH_LONG).show();
+            contentString = new String();
             // TODO :: txt 파일 읽어 Content 에 저장, 화면에 띄우기
+            try {
+                String str;
+                BufferedReader fr = new BufferedReader(new FileReader(txtFile));
+                while((str = fr.readLine()) != null) {
+                    contentString += (str + '\n');
+                }
+                contents.setText(contentString);
+            } catch(IOException e) {
+            }
             // TODO :: onBackPressed() 에 파일 저장하는 코드 추가하기
         }
 
@@ -91,6 +104,19 @@ public class AddNoteFragment extends Fragment implements OnBackPressedListener {
     @Override
     public void onBackPressed() {
         MainActivity activity = (MainActivity) getActivity();
+
+        try {
+            FileWriter fw = new FileWriter(mainAct.getLastFilePath());
+            String str = contents.getText().toString();
+
+            fw.write(str);
+            Toast.makeText(getActivity(), "Save done", Toast.LENGTH_SHORT).show();
+
+            fw.flush();
+            fw.close();
+        } catch (IOException e) {
+        }
+
         activity.FragmentView(2);
     }
 }

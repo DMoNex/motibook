@@ -119,9 +119,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Integer.parseInt(fr.readLine()), // 7
                     Integer.parseInt(fr.readLine()), // 8
                     Integer.parseInt(fr.readLine())); // 9
+            fr.close();
         } catch(IOException e) {
         }
-
     }
 
     private void signIn() {
