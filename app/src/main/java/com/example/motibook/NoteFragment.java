@@ -69,8 +69,6 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -185,6 +183,9 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
 
         @Override
         public boolean onQueryTextChange(String newText) {
+            if(newText.equals("")) {
+                this.onQueryTextSubmit("");
+            }
             return false;
         }
     };
