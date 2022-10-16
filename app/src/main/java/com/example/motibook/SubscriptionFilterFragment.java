@@ -213,7 +213,7 @@ public class SubscriptionFilterFragment extends Fragment {
          */
         private String createCalendar() throws IOException {
 
-            String ids = getCalendarID("CalendarTitle");
+            String ids = getCalendarID("Motibook");
 
             if ( ids != null ){
 
@@ -254,12 +254,10 @@ public class SubscriptionFilterFragment extends Fragment {
 
         private String addEvent() {
 
-            String calendarID = getCalendarID("CalendarTitle");
+            String calendarID = getCalendarID("Motibook");
 
             if ( calendarID == null ){
-
                 return "캘린더를 먼저 생성하세요.";
-
             }
 
             Event event = new Event()
