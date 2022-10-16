@@ -1,8 +1,12 @@
 package com.example.motibook;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -12,7 +16,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,7 +28,13 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -34,7 +48,15 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
 
     private Spinner filter;
     private SearchView bookSearch;
+    private RecyclerView recyclerView;
+
+    private PhRecyclerViewAdapter mRecyclerAdapter;
     int bookSearchFlag = 0;
+
+    String mKwd = "";
+    int pageNum = 1; // 현재 페이지
+    String KEY_STRING = "0b8f384d2efa7df3d0321ae312e0d8074724e887fab112cd8b870be0f5973d89"; // 키
+    String sendQuery = "";
 
     public AddBookFragment() {
         // Required empty public constructor
@@ -70,6 +92,19 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         filter = (Spinner)rootView.findViewById(R.id.bookSearchFilter);
         bookSearch = (SearchView) rootView.findViewById(R.id.bookSearchView);
 
+        recyclerView = (RecyclerView)rootView.findViewById(R.id.bookSearchListView);
+
+        ArrayList<String> nameList = new ArrayList<>();
+
+        // Adapter 추가
+        mRecyclerAdapter = new PhRecyclerViewAdapter(nameList);
+        recyclerView.setAdapter(mRecyclerAdapter);
+
+        // Layout manager 추가
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(new AppCompatActivity());
+        recyclerView.setLayoutManager(layoutManager);
+
+
         // Filter Array Note Filter Array 공유
         ArrayAdapter<CharSequence> bookFilterAdapter = ArrayAdapter.createFromResource(
                 getActivity(), R.array.noteFilterArray, android.R.layout.simple_spinner_item);
@@ -87,9 +122,9 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
-                case 0: // SearchView 에서 제목으로 검색
+                case 0: // SearchView 에서 ISBN 으로 검색
                     bookSearchFlag = 0;
-                case 1: // SearchView 에서 ISBN 으로 검색
+                case 1: // SearchView 에서 제목으로 검색
                     bookSearchFlag = 1;
             }
         }
@@ -104,14 +139,38 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         @Override
         public boolean onQueryTextSubmit(String query) {
             // TODO: query 받아 검색
-            if(bookSearchFlag == 0) { // 제목 검색인 경우
+
+            try {
+                bookSearchFlag = filter.getSelectedItemPosition();
+                if (bookSearchFlag == 0) {
+                    // 요청 쿼리의 포맷은 https://www.nl.go.kr/NL/contents/N31101030700.do 참조
+                    mKwd = URLEncoder.encode(query.trim(), "utf-8");
+                    String category = URLEncoder.encode("도서", "utf-8");
+                    sendQuery = String.format("https://www.nl.go.kr/NL/search/openApi/search.do?key=%s&apiType=xml&srchTarget=total&kwd=%s&pageSize=10&pageNum=%s&category=%s&sort=&srchTarget=title",
+                            KEY_STRING,
+                            mKwd,
+                            pageNum,
+                            category);
+                }
+                else if (bookSearchFlag == 1) {
+                    mKwd = URLEncoder.encode(query.trim(), "utf-8");
+                    sendQuery = String.format("https://www.nl.go.kr/NL/search/openApi/search.do?key=%s&detailSearch=true&isbnOp=isbn&isbnCode=%s",
+                            KEY_STRING,
+                            mKwd);
+                }
+
+                new AddBookFragment.MakeRequestTask().execute();
 
             }
-            else if (bookSearchFlag == 1) { // ISBN 검색인 경우
-
+            catch (Exception e){
+                Toast.makeText(getActivity(), String.format("조건이 올바르지 않습니다."), Toast.LENGTH_LONG).show();
+                return false;
             }
+
             //Test Line
             //검색 결과 받아왔다고 가정. 일단 800번(문학)이며, ISBN 0000000000800이라고 가정함
+
+            /*
             String ISBN = "0000000000800";
             String bookName = "aaaa";
             int dataIndex = 8;
@@ -168,8 +227,7 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                 Toast.makeText(getActivity(), String.format("파일생성 %d", ((MainActivity)getActivity()).statisticsData.totalNum), Toast.LENGTH_LONG).show();
 
             }
-
-
+            */
             return true;
         }
 
@@ -185,5 +243,159 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         activity.FragmentView(1);
     }
 
+    private class MakeRequestTask extends AsyncTask<Void, Void, String> {
 
+        private Exception mLastError = null;
+        private MainActivity mActivity;
+        List<String> eventStrings = new ArrayList<String>();
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+
+                if (sendQuery != "") {
+                    URL url = new URL(sendQuery);
+                    InputStream is= url.openStream();
+                    XmlPullParserFactory factory= XmlPullParserFactory.newInstance();
+                    XmlPullParser xpp= factory.newPullParser();
+                    xpp.setInput( new InputStreamReader(is, "UTF-8") ); //inputstream 으로부터 xml 입력받기
+
+                    String tag;
+
+                    String total_num = "";
+                    String title_info = "";
+                    String pub_name = "";
+                    String image_url = "";
+                    String type_name = "";
+                    String isbn = "";
+                    String detail_link = "";
+                    String kdc_name_1s = "";
+                    String kdc_code_1s = "";
+                    String class_no = "";
+                    xpp.next();
+                    int eventType= xpp.getEventType();
+
+                    while( eventType != XmlPullParser.END_DOCUMENT ) {
+                        switch( eventType ) {
+                            case XmlPullParser.START_DOCUMENT:
+                                break;
+                            case XmlPullParser.START_TAG:
+                                tag= xpp.getName();
+                                if(tag.equals("item")) {
+                                }
+                                else if(tag.equals("title_info")){  // 제목
+                                    xpp.next();
+                                    title_info = xpp.getText();
+                                }
+                                else if (tag.equals("pub_info")) { // 출판사
+                                    xpp.next();
+                                    pub_name = xpp.getText();
+                                }
+                                else if (tag.equals("image_url")) { // 이미지 url
+                                    xpp.next();
+                                    image_url = xpp.getText();
+                                }
+                                else if (tag.equals("type_name")) { // 도서, 신문, 음악자료 등
+                                    xpp.next();
+                                    type_name = xpp.getText();
+                                }
+                                else if (tag.equals("isbn")) { // ISBN
+                                    xpp.next();
+                                    isbn = xpp.getText();
+                                }
+                                else if (tag.equals("detail_link")) { // 추가 정보 링크
+                                    xpp.next();
+                                    detail_link = "https://www.nl.go.kr/" + xpp.getText();
+                                }
+                                else if (tag.equals("kdc_name_1s")){ // 문학, 예술 등
+                                    xpp.next();
+                                    kdc_name_1s = xpp.getText();
+                                }
+                                else if (tag.equals("kdc_code_1s")){ // 8(문학), 6(예술) 등
+                                    xpp.next();
+                                    kdc_code_1s = xpp.getText();
+                                }
+                                else if (tag.equals("class_no")) { // 813.6, 668.4 등
+                                    xpp.next();
+                                    class_no = xpp.getText();
+                                }
+
+
+                                // 도서 정보가 아닌 페이지의 패러미터에서 가져오는 반환값
+                                else if (tag.equals("total")) { // 총 검색 갯수
+                                    xpp.next();
+                                    total_num = xpp.getText();
+                                }
+                                //else if (tag.equals("category")) { // 현재 검색한 카테고리
+                                //    xpp.next();
+                                //    category = xpp.getText();
+                                //}
+                                break;
+                            case XmlPullParser.END_TAG:
+                                tag= xpp.getName();
+                                if(tag.equals("item")) {
+                                    /*
+                                    여기서 각 지역변수 가지고 list에 item 추가
+                                    */
+                                    mRecyclerAdapter.addItem("제목:" + title_info + " 출판사:" + pub_name);
+                                }
+                                break;
+                        }
+
+                        eventType = xpp.next();
+                    }
+                }
+
+            } catch (Exception e) {
+                mLastError = e;
+                cancel(true);
+                return null;
+            }
+
+            return null;
+        }
+
+    }
+
+    public class PhRecyclerViewAdapter extends RecyclerView.Adapter<PhRecyclerViewHolder> {
+
+        private ArrayList<String> mNameList;
+
+        public PhRecyclerViewAdapter(ArrayList<String> a_list) {
+            mNameList = a_list;
+        }
+
+        @Override
+        public PhRecyclerViewHolder onCreateViewHolder(ViewGroup a_viewGroup, int a_viewType) {
+            View view = LayoutInflater.from(a_viewGroup.getContext()).inflate(R.layout.result_list_item, a_viewGroup, false);
+            return new PhRecyclerViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(PhRecyclerViewHolder a_viewHolder, int a_position) {
+            String strName = mNameList.get(a_position);
+            a_viewHolder.tvName.setText(strName);
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return mNameList.size();
+        }
+
+        public void addItem(String str) {
+            mNameList.add(str);
+            mRecyclerAdapter.notifyItemInserted(mNameList.size());
+        }
+    }
+
+    public class PhRecyclerViewHolder extends RecyclerView.ViewHolder {
+        TextView tvName;
+
+        public PhRecyclerViewHolder(View a_itemView) {
+            super(a_itemView);
+
+            tvName = a_itemView.findViewById(R.id.tv_name);
+        }
+    }
 }
