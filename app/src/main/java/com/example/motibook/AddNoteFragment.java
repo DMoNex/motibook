@@ -95,7 +95,6 @@ public class AddNoteFragment extends Fragment implements OnBackPressedListener {
                 contents.setText(contentString);
             } catch(IOException e) {
             }
-            // TODO :: onBackPressed() 에 파일 저장하는 코드 추가하기
         }
 
         return rootView;

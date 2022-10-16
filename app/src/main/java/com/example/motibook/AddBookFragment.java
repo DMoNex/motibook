@@ -45,13 +45,13 @@ import java.util.stream.Stream;
  */
 
 public class AddBookFragment extends Fragment implements OnBackPressedListener {
-
     private Spinner filter;
     private SearchView bookSearch;
-    private RecyclerView recyclerView;
-
-    private PhRecyclerViewAdapter mRecyclerAdapter;
+    private RecyclerView bookList;
+    private ArrayList<BookListItem> bookListItems;
     int bookSearchFlag = 0;
+
+    BookListItemAdapter bookListItemAdapter;
 
     String mKwd = "";
     int pageNum = 1; // 현재 페이지
@@ -62,15 +62,6 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddBookFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static AddBookFragment newInstance(String param1, String param2) {
         AddBookFragment fragment = new AddBookFragment();
         Bundle args = new Bundle();
@@ -89,29 +80,36 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         // Inflate the layout for this fragment
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_add_book, container, false);
 
-        filter = (Spinner)rootView.findViewById(R.id.bookSearchFilter);
+        bookListItems = new ArrayList<BookListItem>();
+
+        filter = (Spinner) rootView.findViewById(R.id.bookSearchFilter);
         bookSearch = (SearchView) rootView.findViewById(R.id.bookSearchView);
-
-        recyclerView = (RecyclerView)rootView.findViewById(R.id.bookSearchListView);
-
-        ArrayList<String> nameList = new ArrayList<>();
-
-        // Adapter 추가
-        mRecyclerAdapter = new PhRecyclerViewAdapter(nameList);
-        recyclerView.setAdapter(mRecyclerAdapter);
-
-        // Layout manager 추가
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(new AppCompatActivity());
-        recyclerView.setLayoutManager(layoutManager);
-
+        // bookList 멤버는 RecyclerView bookSearchListView 임
+        bookList = (RecyclerView) rootView.findViewById(R.id.bookSearchListView);
 
         // Filter Array Note Filter Array 공유
         ArrayAdapter<CharSequence> bookFilterAdapter = ArrayAdapter.createFromResource(
                 getActivity(), R.array.noteFilterArray, android.R.layout.simple_spinner_item);
         bookFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        // Layout manager 추가
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
+        bookList.setLayoutManager(linearLayoutManager);
+
+        // Adapter 추가
+        bookListItemAdapter = new BookListItemAdapter(bookListItems);
+        bookListItemAdapter.setOnItemClickListener(new BookListItemAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int pos) {
+                Toast.makeText(getActivity(), "bookcheck", Toast.LENGTH_SHORT);
+            }
+        });
+
         filter.setAdapter(bookFilterAdapter);
         filter.setOnItemSelectedListener(bookFilterListener);
+
+        // noteList 와 Adapter 연결
+        bookList.setAdapter(bookListItemAdapter);
 
         bookSearch.setOnQueryTextListener(bookSearchListener);
 
@@ -151,8 +149,7 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                             mKwd,
                             pageNum,
                             category);
-                }
-                else if (bookSearchFlag == 1) {
+                } else if (bookSearchFlag == 1) {
                     mKwd = URLEncoder.encode(query.trim(), "utf-8");
                     sendQuery = String.format("https://www.nl.go.kr/NL/search/openApi/search.do?key=%s&detailSearch=true&isbnOp=isbn&isbnCode=%s",
                             KEY_STRING,
@@ -160,9 +157,8 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                 }
 
                 new AddBookFragment.MakeRequestTask().execute();
-
-            }
-            catch (Exception e){
+                Toast.makeText(getActivity(), "size : " + bookListItems.size(), Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
                 Toast.makeText(getActivity(), String.format("조건이 올바르지 않습니다."), Toast.LENGTH_LONG).show();
                 return false;
             }
@@ -253,13 +249,13 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         protected String doInBackground(Void... params) {
             try {
 
-                if (sendQuery != "") {
+                if (!sendQuery.isEmpty()) {
                     URL url = new URL(sendQuery);
-                    InputStream is= url.openStream();
-                    XmlPullParserFactory factory= XmlPullParserFactory.newInstance();
-                    XmlPullParser xpp= factory.newPullParser();
-                    xpp.setInput( new InputStreamReader(is, "UTF-8") ); //inputstream 으로부터 xml 입력받기
-
+                    InputStream is = url.openStream();
+                    XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+                    XmlPullParser xpp = factory.newPullParser();
+                    //inputstream 으로부터 xml 입력받기
+                    xpp.setInput(new InputStreamReader(is, "UTF-8"));
                     String tag;
 
                     String total_num = "";
@@ -273,49 +269,40 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                     String kdc_code_1s = "";
                     String class_no = "";
                     xpp.next();
-                    int eventType= xpp.getEventType();
+                    int eventType = xpp.getEventType();
 
-                    while( eventType != XmlPullParser.END_DOCUMENT ) {
-                        switch( eventType ) {
+                    while (eventType != XmlPullParser.END_DOCUMENT) {
+                        switch (eventType) {
                             case XmlPullParser.START_DOCUMENT:
                                 break;
                             case XmlPullParser.START_TAG:
-                                tag= xpp.getName();
-                                if(tag.equals("item")) {
-                                }
-                                else if(tag.equals("title_info")){  // 제목
+                                tag = xpp.getName();
+                                if (tag.equals("item")) {
+                                } else if (tag.equals("title_info")) {  // 제목
                                     xpp.next();
                                     title_info = xpp.getText();
-                                }
-                                else if (tag.equals("pub_info")) { // 출판사
+                                } else if (tag.equals("pub_info")) { // 출판사
                                     xpp.next();
                                     pub_name = xpp.getText();
-                                }
-                                else if (tag.equals("image_url")) { // 이미지 url
+                                } else if (tag.equals("image_url")) { // 이미지 url
                                     xpp.next();
                                     image_url = xpp.getText();
-                                }
-                                else if (tag.equals("type_name")) { // 도서, 신문, 음악자료 등
+                                } else if (tag.equals("type_name")) { // 도서, 신문, 음악자료 등
                                     xpp.next();
                                     type_name = xpp.getText();
-                                }
-                                else if (tag.equals("isbn")) { // ISBN
+                                } else if (tag.equals("isbn")) { // ISBN
                                     xpp.next();
                                     isbn = xpp.getText();
-                                }
-                                else if (tag.equals("detail_link")) { // 추가 정보 링크
+                                } else if (tag.equals("detail_link")) { // 추가 정보 링크
                                     xpp.next();
                                     detail_link = "https://www.nl.go.kr/" + xpp.getText();
-                                }
-                                else if (tag.equals("kdc_name_1s")){ // 문학, 예술 등
+                                } else if (tag.equals("kdc_name_1s")) { // 문학, 예술 등
                                     xpp.next();
                                     kdc_name_1s = xpp.getText();
-                                }
-                                else if (tag.equals("kdc_code_1s")){ // 8(문학), 6(예술) 등
+                                } else if (tag.equals("kdc_code_1s")) { // 8(문학), 6(예술) 등
                                     xpp.next();
                                     kdc_code_1s = xpp.getText();
-                                }
-                                else if (tag.equals("class_no")) { // 813.6, 668.4 등
+                                } else if (tag.equals("class_no")) { // 813.6, 668.4 등
                                     xpp.next();
                                     class_no = xpp.getText();
                                 }
@@ -332,12 +319,13 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                 //}
                                 break;
                             case XmlPullParser.END_TAG:
-                                tag= xpp.getName();
-                                if(tag.equals("item")) {
+                                tag = xpp.getName();
+                                if (tag.equals("item")) {
                                     /*
-                                    여기서 각 지역변수 가지고 list에 item 추가
+                                    여기서 각 지역변수 가지고 list에 item 추가,
                                     */
-                                    mRecyclerAdapter.addItem("제목:" + title_info + " 출판사:" + pub_name);
+                                    //TODO : pub_name 저자로 바꾸기
+                                    bookListItems.add(new BookListItem(pub_name, title_info));
                                 }
                                 break;
                         }
@@ -356,7 +344,8 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         }
 
     }
-
+}
+/*
     public class PhRecyclerViewAdapter extends RecyclerView.Adapter<PhRecyclerViewHolder> {
 
         private ArrayList<String> mNameList;
@@ -367,7 +356,7 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
 
         @Override
         public PhRecyclerViewHolder onCreateViewHolder(ViewGroup a_viewGroup, int a_viewType) {
-            View view = LayoutInflater.from(a_viewGroup.getContext()).inflate(R.layout.result_list_item, a_viewGroup, false);
+            View view = LayoutInflater.from(a_viewGroup.getContext()).inflate(R.layout.book_list_item, a_viewGroup, false);
             return new PhRecyclerViewHolder(view);
         }
 
@@ -398,4 +387,4 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
             tvName = a_itemView.findViewById(R.id.tv_name);
         }
     }
-}
+}*/

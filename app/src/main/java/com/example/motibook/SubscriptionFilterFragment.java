@@ -52,7 +52,7 @@ import java.util.Locale;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class SubscriptionFilterFragment extends Fragment {
+public class SubscriptionFilterFragment extends Fragment implements OnBackPressedListener {
 
     private Spinner regionFilter;
     private Spinner subRegionFilter;
@@ -504,6 +504,12 @@ public class SubscriptionFilterFragment extends Fragment {
             }
         });
         return rootView;
+    }
+
+    @Override
+    public void onBackPressed() {
+        MainActivity activity = (MainActivity) getActivity();
+        activity.FragmentView(1);
     }
 
     // regionFilterListener (Spinner)
