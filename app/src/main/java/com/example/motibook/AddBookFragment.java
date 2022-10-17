@@ -1,6 +1,8 @@
 package com.example.motibook;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,9 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SearchView;
@@ -51,12 +56,17 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
     private ArrayList<BookListItem> bookListItems;
     int bookSearchFlag = 0;
 
+    InputMethodManager imm;
     BookListItemAdapter bookListItemAdapter;
 
     String mKwd = "";
     int pageNum = 1; // 현재 페이지
     String KEY_STRING = "0b8f384d2efa7df3d0321ae312e0d8074724e887fab112cd8b870be0f5973d89"; // 키
     String sendQuery = "";
+
+    final int MESSAGE_ID_LIST_UPDATE = 1;
+
+    Handler handler;
 
     public AddBookFragment() {
         // Required empty public constructor
@@ -72,6 +82,20 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                switch(msg.what){
+
+                    case MESSAGE_ID_LIST_UPDATE: //msg.what == MESSAGE_ID_CAT 인 경우
+                        bookListItemAdapter.notifyDataSetChanged();
+                        break;
+                }
+            }
+        };
     }
 
     @Override
@@ -140,24 +164,12 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
 
             try {
                 bookSearchFlag = filter.getSelectedItemPosition();
-                if (bookSearchFlag == 0) {
-                    // 요청 쿼리의 포맷은 https://www.nl.go.kr/NL/contents/N31101030700.do 참조
-                    mKwd = URLEncoder.encode(query.trim(), "utf-8");
-                    String category = URLEncoder.encode("도서", "utf-8");
-                    sendQuery = String.format("https://www.nl.go.kr/NL/search/openApi/search.do?key=%s&apiType=xml&srchTarget=total&kwd=%s&pageSize=10&pageNum=%s&category=%s&sort=&srchTarget=title",
-                            KEY_STRING,
-                            mKwd,
-                            pageNum,
-                            category);
-                } else if (bookSearchFlag == 1) {
-                    mKwd = URLEncoder.encode(query.trim(), "utf-8");
-                    sendQuery = String.format("https://www.nl.go.kr/NL/search/openApi/search.do?key=%s&detailSearch=true&isbnOp=isbn&isbnCode=%s",
-                            KEY_STRING,
-                            mKwd);
-                }
+                mKwd = URLEncoder.encode(query.trim(), "utf-8");
 
+                searchBookList();
                 new AddBookFragment.MakeRequestTask().execute();
-                Toast.makeText(getActivity(), "size : " + bookListItems.size(), Toast.LENGTH_SHORT).show();
+                // 키보드 숨김
+                imm.hideSoftInputFromWindow(bookSearch.getWindowToken(), 0);
             } catch (Exception e) {
                 Toast.makeText(getActivity(), String.format("조건이 올바르지 않습니다."), Toast.LENGTH_LONG).show();
                 return false;
@@ -233,6 +245,23 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         }
     };
 
+    public void searchBookList() {
+        if (bookSearchFlag == 0) {
+            // 요청 쿼리의 포맷은 https://www.nl.go.kr/NL/contents/N31101030700.do 참조
+
+            String category = URLEncoder.encode("도서", "utf-8");
+            sendQuery = String.format("https://www.nl.go.kr/NL/search/openApi/search.do?key=%s&apiType=xml&srchTarget=total&kwd=%s&pageSize=10&pageNum=%s&category=%s&sort=&srchTarget=title",
+                    KEY_STRING,
+                    mKwd,
+                    pageNum,
+                    category);
+        } else if (bookSearchFlag == 1) {
+            sendQuery = String.format("https://www.nl.go.kr/NL/search/openApi/search.do?key=%s&detailSearch=true&isbnOp=isbn&isbnCode=%s",
+                    KEY_STRING,
+                    mKwd);
+        }
+    }
+
     @Override
     public void onBackPressed() {
         MainActivity activity = (MainActivity) getActivity();
@@ -260,6 +289,7 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
 
                     String total_num = "";
                     String title_info = "";
+                    String author_info = "";
                     String pub_name = "";
                     String image_url = "";
                     String type_name = "";
@@ -281,6 +311,9 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                 } else if (tag.equals("title_info")) {  // 제목
                                     xpp.next();
                                     title_info = xpp.getText();
+                                } else if (tag.equals("author_info")) {  // 저자
+                                    xpp.next();
+                                    author_info = xpp.getText();
                                 } else if (tag.equals("pub_info")) { // 출판사
                                     xpp.next();
                                     pub_name = xpp.getText();
@@ -325,7 +358,7 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                     여기서 각 지역변수 가지고 list에 item 추가,
                                     */
                                     //TODO : pub_name 저자로 바꾸기
-                                    bookListItems.add(new BookListItem(pub_name, title_info));
+                                    bookListItems.add(new BookListItem(author_info + " - " + pub_name, title_info));
                                 }
                                 break;
                         }
@@ -339,6 +372,10 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                 cancel(true);
                 return null;
             }
+
+            Message msg = handler.obtainMessage(); //메인스레드 핸들러의 메시지 객체 가져오기
+            msg.what = MESSAGE_ID_LIST_UPDATE; // 메시지 아이디 설정
+            handler.sendMessage(msg); // 메인스레드 핸들러로 메시지 보내기
 
             return null;
         }
