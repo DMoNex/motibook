@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
@@ -24,11 +25,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link NoteFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class NoteFragment extends Fragment implements OnBackPressedListener {
     private Spinner filter;
     private SearchView noteSearch;
@@ -36,6 +32,7 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
     private ArrayList<NoteListItem> noteListItems;
     int noteSearchFlag = 0;
     MainActivity mainAct;
+    InputMethodManager imm;
 
     // Search 에서 호출하기 위해 여기에 선언
     NoteListItemAdapter noteListItemAdapter;
@@ -68,6 +65,9 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
         if (getArguments() != null) {
         }
     }
@@ -172,7 +172,10 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
                 }
             }
 
-            Toast.makeText(getActivity(), "검색어 = "+query, Toast.LENGTH_SHORT).show();
+            if(!query.isEmpty()) {
+                imm.hideSoftInputFromWindow(noteSearch.getWindowToken(), 0);
+            }
+            //Toast.makeText(getActivity(), "검색어 = "+query, Toast.LENGTH_SHORT).show();
             /// For Test End
 
             // noteSearchListView 갱신

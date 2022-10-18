@@ -249,12 +249,15 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         if (bookSearchFlag == 0) {
             // 요청 쿼리의 포맷은 https://www.nl.go.kr/NL/contents/N31101030700.do 참조
 
-            String category = URLEncoder.encode("도서", "utf-8");
-            sendQuery = String.format("https://www.nl.go.kr/NL/search/openApi/search.do?key=%s&apiType=xml&srchTarget=total&kwd=%s&pageSize=10&pageNum=%s&category=%s&sort=&srchTarget=title",
-                    KEY_STRING,
-                    mKwd,
-                    pageNum,
-                    category);
+            try {
+                String category = URLEncoder.encode("도서", "utf-8");
+                sendQuery = String.format("https://www.nl.go.kr/NL/search/openApi/search.do?key=%s&apiType=xml&srchTarget=total&kwd=%s&pageSize=10&pageNum=%s&category=%s&sort=&srchTarget=title",
+                        KEY_STRING,
+                        mKwd,
+                        pageNum,
+                        category);
+            } catch(Exception e) {
+            }
         } else if (bookSearchFlag == 1) {
             sendQuery = String.format("https://www.nl.go.kr/NL/search/openApi/search.do?key=%s&detailSearch=true&isbnOp=isbn&isbnCode=%s",
                     KEY_STRING,
@@ -357,7 +360,6 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                     /*
                                     여기서 각 지역변수 가지고 list에 item 추가,
                                     */
-                                    //TODO : pub_name 저자로 바꾸기
                                     bookListItems.add(new BookListItem(author_info + " - " + pub_name, title_info));
                                 }
                                 break;
