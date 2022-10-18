@@ -111,6 +111,21 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         // bookList 멤버는 RecyclerView bookSearchListView 임
         bookList = (RecyclerView) rootView.findViewById(R.id.bookSearchListView);
 
+        bookList.setOnScrollListener (new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (!bookList.canScrollVertically(-1)) {
+                    // Top of list
+                } else if (!bookList.canScrollVertically(1)) {
+                    // End of list
+                    pageNum++;
+                    searchBookList();
+                } else {
+                    // idle
+                }
+            }
+        });
+
         // Filter Array Note Filter Array 공유
         ArrayAdapter<CharSequence> bookFilterAdapter = ArrayAdapter.createFromResource(
                 getActivity(), R.array.noteFilterArray, android.R.layout.simple_spinner_item);
@@ -167,7 +182,6 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                 mKwd = URLEncoder.encode(query.trim(), "utf-8");
 
                 searchBookList();
-                new AddBookFragment.MakeRequestTask().execute();
                 // 키보드 숨김
                 imm.hideSoftInputFromWindow(bookSearch.getWindowToken(), 0);
             } catch (Exception e) {
@@ -249,20 +263,26 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         if (bookSearchFlag == 0) {
             // 요청 쿼리의 포맷은 https://www.nl.go.kr/NL/contents/N31101030700.do 참조
 
+            String category = "";
+
             try {
-                String category = URLEncoder.encode("도서", "utf-8");
-                sendQuery = String.format("https://www.nl.go.kr/NL/search/openApi/search.do?key=%s&apiType=xml&srchTarget=total&kwd=%s&pageSize=10&pageNum=%s&category=%s&sort=&srchTarget=title",
-                        KEY_STRING,
-                        mKwd,
-                        pageNum,
-                        category);
+                category = URLEncoder.encode("도서", "utf-8");
             } catch(Exception e) {
             }
+
+            sendQuery = String.format("https://www.nl.go.kr/NL/search/openApi/search.do?key=%s&apiType=xml&srchTarget=total&kwd=%s&pageSize=20&pageNum=%s&category=%s&sort=&srchTarget=title",
+                    KEY_STRING,
+                    mKwd,
+                    pageNum,
+                    category);
+
         } else if (bookSearchFlag == 1) {
             sendQuery = String.format("https://www.nl.go.kr/NL/search/openApi/search.do?key=%s&detailSearch=true&isbnOp=isbn&isbnCode=%s",
                     KEY_STRING,
                     mKwd);
         }
+
+        new AddBookFragment.MakeRequestTask().execute();
     }
 
     @Override
