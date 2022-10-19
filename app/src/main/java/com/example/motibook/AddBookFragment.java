@@ -150,8 +150,7 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                 builder.setTitle("저장");
                 builder.setMessage(String.format("%s 책을 추가하시겠습니까?", bookName));
 
-                builder.setNegativeButton("예",
-                        new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //예 눌렀을때의 이벤트 처리
@@ -258,8 +257,6 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
     SearchView.OnQueryTextListener bookSearchListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
-            // TODO: query 받아 검색
-
             try {
                 bookSearchFlag = filter.getSelectedItemPosition();
                 mKwd = URLEncoder.encode(query.trim(), "utf-8");
@@ -338,6 +335,10 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
 
         @Override
         public boolean onQueryTextChange(String newText) {
+            if(newText.isEmpty()) {
+                pageNum = 1;
+                bookListItems.clear();
+            }
             return false;
         }
     };
