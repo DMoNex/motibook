@@ -268,68 +268,6 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                 Toast.makeText(getActivity(), String.format("조건이 올바르지 않습니다."), Toast.LENGTH_LONG).show();
                 return false;
             }
-
-            //Test Line
-            //검색 결과 받아왔다고 가정. 일단 800번(문학)이며, ISBN 0000000000800이라고 가정함
-
-            /*
-            String ISBN = "0000000000800";
-            String bookName = "aaaa";
-            int dataIndex = 8;
-            int data = ((MainActivity)getActivity()).statisticsData.data[dataIndex] + 1;
-            ((MainActivity)getActivity()).statisticsData.data[dataIndex] += 1;
-            ((MainActivity)getActivity()).statisticsData.totalNumUpdate();
-
-            String notepath = new String(getActivity().getFilesDir().toString() + "/notes");
-            File noteDir = new File(notepath);
-            if(!noteDir.exists()) {
-                noteDir.mkdir();
-            }
-            File noteFile = new File(noteDir + "/" + ISBN + "#&#" + bookName + ".txt");
-
-            // noteFile이 존재한다면 이미 추가했던 책이므로 아무 동작도 하지 않아야 함
-            if(noteFile.exists()) {
-                Toast.makeText(getActivity(), String.format("이미 등록된 도서입니다."), Toast.LENGTH_LONG).show();
-            }
-            else { // noteFile.txt 생성 (empty)
-                try {
-                    noteFile.createNewFile();
-                } catch (IOException e) {
-                    System.out.println (e.toString());
-                }
-
-                String filepath = new String(getActivity().getFilesDir().toString() + "/stastics");
-                File statDir = new File(filepath);
-                // 하위폴더 미존재시 생성
-                if(!statDir.exists()) {
-                    statDir.mkdir();
-                }
-                File statFile = new File(statDir + "/StatisticsFile.txt");
-
-                try {
-                    statFile.createNewFile();
-                    FileWriter fw = new FileWriter(statFile);
-                    fw.write(String.format("%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n",
-                            ((MainActivity)getActivity()).statisticsData.data[0],
-                            ((MainActivity)getActivity()).statisticsData.data[1],
-                            ((MainActivity)getActivity()).statisticsData.data[2],
-                            ((MainActivity)getActivity()).statisticsData.data[3],
-                            ((MainActivity)getActivity()).statisticsData.data[4],
-                            ((MainActivity)getActivity()).statisticsData.data[5],
-                            ((MainActivity)getActivity()).statisticsData.data[6],
-                            ((MainActivity)getActivity()).statisticsData.data[7],
-                            ((MainActivity)getActivity()).statisticsData.data[8],
-                            ((MainActivity)getActivity()).statisticsData.data[9]));
-                    fw.flush();
-                    fw.close();
-                } catch (IOException e) {
-                    System.out.println (e.toString());
-                }
-
-                Toast.makeText(getActivity(), String.format("파일생성 %d", ((MainActivity)getActivity()).statisticsData.totalNum), Toast.LENGTH_LONG).show();
-
-            }
-            */
             return true;
         }
 
@@ -481,9 +419,12 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                 return null;
             }
 
-            Message msg = handler.obtainMessage(); //메인스레드 핸들러의 메시지 객체 가져오기
-            msg.what = MESSAGE_ID_LIST_UPDATE; // 메시지 아이디 설정
-            handler.sendMessage(msg); // 메인스레드 핸들러로 메시지 보내기
+            //메인스레드 핸들러의 메시지 객체 가져오기
+            Message msg = handler.obtainMessage();
+            // 메시지 아이디 설정
+            msg.what = MESSAGE_ID_LIST_UPDATE;
+            // 메인스레드 핸들러로 메시지 보내기
+            handler.sendMessage(msg);
 
             return null;
         }
