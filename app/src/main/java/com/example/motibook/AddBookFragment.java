@@ -335,10 +335,8 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
 
         @Override
         public boolean onQueryTextChange(String newText) {
-            if(newText.isEmpty()) {
-                pageNum = 1;
-                bookListItems.clear();
-            }
+            pageNum = 1;
+            bookListItems.clear();
             return false;
         }
     };
@@ -492,46 +490,3 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
 
     }
 }
-/*
-    public class PhRecyclerViewAdapter extends RecyclerView.Adapter<PhRecyclerViewHolder> {
-
-        private ArrayList<String> mNameList;
-
-        public PhRecyclerViewAdapter(ArrayList<String> a_list) {
-            mNameList = a_list;
-        }
-
-        @Override
-        public PhRecyclerViewHolder onCreateViewHolder(ViewGroup a_viewGroup, int a_viewType) {
-            View view = LayoutInflater.from(a_viewGroup.getContext()).inflate(R.layout.book_list_item, a_viewGroup, false);
-            return new PhRecyclerViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(PhRecyclerViewHolder a_viewHolder, int a_position) {
-            String strName = mNameList.get(a_position);
-            a_viewHolder.tvName.setText(strName);
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return mNameList.size();
-        }
-
-        public void addItem(String str) {
-            mNameList.add(str);
-            mRecyclerAdapter.notifyItemInserted(mNameList.size());
-        }
-    }
-
-    public class PhRecyclerViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName;
-
-        public PhRecyclerViewHolder(View a_itemView) {
-            super(a_itemView);
-
-            tvName = a_itemView.findViewById(R.id.tv_name);
-        }
-    }
-}*/
