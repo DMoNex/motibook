@@ -1,10 +1,12 @@
 package com.example.motibook;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -140,7 +142,88 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         bookListItemAdapter.setOnItemClickListener(new BookListItemAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int pos) {
-                Toast.makeText(getActivity(), "bookcheck", Toast.LENGTH_SHORT);
+
+                String isbn = bookListItems.get(pos).getIsbn();
+                String bookName = bookListItems.get(pos).getBookName();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("저장");
+                builder.setMessage(String.format("%s 책을 추가하시겠습니까?", bookName));
+
+                builder.setNegativeButton("예",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //예 눌렀을때의 이벤트 처리
+
+                                int dataIndex = bookListItems.get(pos).getKdcCodeLs();
+
+                                int data = ((MainActivity)getActivity()).statisticsData.data[dataIndex] + 1;
+                                ((MainActivity)getActivity()).statisticsData.data[dataIndex] += 1;
+                                ((MainActivity)getActivity()).statisticsData.totalNumUpdate();
+
+                                String notepath = new String(getActivity().getFilesDir().toString() + "/notes");
+                                File noteDir = new File(notepath);
+                                if(!noteDir.exists()) {
+                                    noteDir.mkdir();
+                                }
+                                File noteFile = new File(noteDir + "/" + isbn + "#&#" + bookName + ".txt");
+
+                                // noteFile이 존재한다면 이미 추가했던 책이므로 아무 동작도 하지 않아야 함
+                                if(noteFile.exists()) {
+                                    Toast.makeText(getActivity(), String.format("이미 등록된 도서입니다."), Toast.LENGTH_LONG).show();
+                                }
+                                else { // noteFile.txt 생성 (empty)
+                                    try {
+                                        noteFile.createNewFile();
+                                    } catch (IOException e) {
+                                        System.out.println (e.toString());
+                                    }
+
+                                    String filepath = new String(getActivity().getFilesDir().toString() + "/stastics");
+                                    File statDir = new File(filepath);
+                                    // 하위폴더 미존재시 생성
+                                    if(!statDir.exists()) {
+                                        statDir.mkdir();
+                                    }
+                                    File statFile = new File(statDir + "/StatisticsFile.txt");
+
+                                    try {
+                                        statFile.createNewFile();
+                                        FileWriter fw = new FileWriter(statFile);
+                                        fw.write(String.format("%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n",
+                                                ((MainActivity)getActivity()).statisticsData.data[0],
+                                                ((MainActivity)getActivity()).statisticsData.data[1],
+                                                ((MainActivity)getActivity()).statisticsData.data[2],
+                                                ((MainActivity)getActivity()).statisticsData.data[3],
+                                                ((MainActivity)getActivity()).statisticsData.data[4],
+                                                ((MainActivity)getActivity()).statisticsData.data[5],
+                                                ((MainActivity)getActivity()).statisticsData.data[6],
+                                                ((MainActivity)getActivity()).statisticsData.data[7],
+                                                ((MainActivity)getActivity()).statisticsData.data[8],
+                                                ((MainActivity)getActivity()).statisticsData.data[9]));
+                                        fw.flush();
+                                        fw.close();
+                                    } catch (IOException e) {
+                                        System.out.println (e.toString());
+                                    }
+
+                                    Toast.makeText(getActivity(), "책이 등록되었습니다.", Toast.LENGTH_LONG).show();
+
+                                }
+                            }
+                        });
+
+                builder.setPositiveButton("아니오",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //아니오 눌렀을때의 이벤트 처리
+                                return;
+                            }
+                        });
+
+                builder.show();
             }
         });
 
@@ -319,7 +402,7 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                     String isbn = "";
                     String detail_link = "";
                     String kdc_name_1s = "";
-                    String kdc_code_1s = "";
+                    int kdc_code_1s = -1;
                     String class_no = "";
                     xpp.next();
                     int eventType = xpp.getEventType();
@@ -357,7 +440,11 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                     kdc_name_1s = xpp.getText();
                                 } else if (tag.equals("kdc_code_1s")) { // 8(문학), 6(예술) 등
                                     xpp.next();
-                                    kdc_code_1s = xpp.getText();
+                                    try{
+                                        kdc_code_1s = Integer.parseInt((xpp.getText()));
+                                    } catch (Exception e) {
+                                        kdc_code_1s = -1;
+                                    }
                                 } else if (tag.equals("class_no")) { // 813.6, 668.4 등
                                     xpp.next();
                                     class_no = xpp.getText();
@@ -380,7 +467,7 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                     /*
                                     여기서 각 지역변수 가지고 list에 item 추가,
                                     */
-                                    bookListItems.add(new BookListItem(author_info + " - " + pub_name, title_info));
+                                    bookListItems.add(new BookListItem(author_info + " - " + pub_name, title_info, isbn, kdc_code_1s));
                                 }
                                 break;
                         }

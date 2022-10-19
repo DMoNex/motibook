@@ -34,6 +34,7 @@ public class BookListItemAdapter extends RecyclerView.Adapter<BookListItemAdapte
         BookListItem item = items.get(position);
         holder.bookName.setText(item.getBookName());
         holder.authorName.setText(item.getAuthor());
+        holder.isbn = item.getIsbn();
     }
 
     @Override
@@ -48,6 +49,7 @@ public class BookListItemAdapter extends RecyclerView.Adapter<BookListItemAdapte
     public class Holder extends RecyclerView.ViewHolder {
         private TextView bookName;
         private TextView authorName;
+        public String isbn;
 
         public Holder(@NonNull View itemView) {
             super(itemView);
