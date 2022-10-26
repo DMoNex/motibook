@@ -168,7 +168,7 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                 }
                                 File noteFile = new File(noteDir + "/" + isbn + "#&#" + bookName + ".txt");
 
-                                // noteFile이 존재한다면 이미 추가했던 책이므로 아무 동작도 하지 않아야 함
+                                    // noteFile이 존재한다면 이미 추가했던 책이므로 아무 동작도 하지 않아야 함
                                 if(noteFile.exists()) {
                                     Toast.makeText(getActivity(), String.format("이미 등록된 도서입니다."), Toast.LENGTH_LONG).show();
                                 }
@@ -258,6 +258,10 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         @Override
         public boolean onQueryTextSubmit(String query) {
             try {
+                pageNum = 1;
+                bookListItems.clear();
+
+
                 bookSearchFlag = filter.getSelectedItemPosition();
                 mKwd = URLEncoder.encode(query.trim(), "utf-8");
 
@@ -311,6 +315,20 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
         activity.FragmentView(1);
     }
 
+    private String replaceHTMLTags (String str) {
+
+        str = str.replace("&lt;", "<");
+        str = str.replace("&gt;", ">");
+        str = str.replace("&gt;", ">");
+        str = str.replace("&amp;", "&");
+        str = str.replace("&nbsp;", " ");
+        str = str.replace("&quot;", "\"");
+        str = str.replace("&#035;", "#");
+        str = str.replace("&#039;", "\'");
+
+        return str;
+    }
+
     private class MakeRequestTask extends AsyncTask<Void, Void, String> {
 
         private Exception mLastError = null;
@@ -354,9 +372,11 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                 } else if (tag.equals("title_info")) {  // 제목
                                     xpp.next();
                                     title_info = xpp.getText();
+                                    title_info = replaceHTMLTags(title_info);
                                 } else if (tag.equals("author_info")) {  // 저자
                                     xpp.next();
                                     author_info = xpp.getText();
+                                    author_info = replaceHTMLTags(author_info);
                                 } else if (tag.equals("pub_info")) { // 출판사
                                     xpp.next();
                                     pub_name = xpp.getText();
@@ -400,7 +420,7 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                 break;
                             case XmlPullParser.END_TAG:
                                 tag = xpp.getName();
-                                if (tag.equals("item")) {
+                                if (tag.equals("item") && isbn != "" ) {
                                     /*
                                     여기서 각 지역변수 가지고 list에 item 추가,
                                     */
