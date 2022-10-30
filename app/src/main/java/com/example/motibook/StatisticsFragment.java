@@ -31,11 +31,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link StatisticsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class StatisticsFragment extends Fragment {
     ArrayList<BarEntry> bookGraphDataEntries = new ArrayList<>();
     TextView countView;

@@ -85,7 +85,6 @@ public class AddNoteFragment extends Fragment implements OnBackPressedListener {
         File txtFile = new File(mainAct.getLastFilePath());
         if(txtFile.exists()) {
             contentString = new String();
-            // TODO :: txt 파일 읽어 Content 에 저장, 화면에 띄우기
             try {
                 String str;
                 BufferedReader fr = new BufferedReader(new FileReader(txtFile));

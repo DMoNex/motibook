@@ -129,7 +129,6 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
     }
 
     private String getResultsFromApi() {
-
         if (!isGooglePlayServicesAvailable()) { // Google Play Services를 사용할 수 없는 경우
             acquireGooglePlayServices();
         } else if (mCredential.getSelectedAccountName() == null) { // 유효한 Google 계정이 선택되어 있지 않은 경우
@@ -495,6 +494,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
                 getResultsFromApi();
             }
         });
+
         return rootView;
     }
 
