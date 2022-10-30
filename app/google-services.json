@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "992501791166",
+    "project_id": "motibookdb",
+    "storage_bucket": "motibookdb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992501791166:android:34c151c075468edc3021ef",
+        "android_client_info": {
+          "package_name": "com.example.motibook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "992501791166-s2db9r5g7vb0dc5rncbq82pkj2vojngi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYqvaMw98e-iUVHfOo-DQcYudYnNHWATc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "992501791166-s2db9r5g7vb0dc5rncbq82pkj2vojngi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
