@@ -91,8 +91,8 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
             @Override
             public void handleMessage(Message msg) {
                 switch(msg.what){
-
-                    case MESSAGE_ID_LIST_UPDATE: //msg.what == MESSAGE_ID_CAT 인 경우
+                    //msg.what == MESSAGE_ID_CAT 인 경우
+                    case MESSAGE_ID_LIST_UPDATE:
                         bookListItemAdapter.notifyDataSetChanged();
                         break;
                 }

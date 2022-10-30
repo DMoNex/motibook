@@ -109,7 +109,7 @@ public class AddNoteFragment extends Fragment implements OnBackPressedListener {
             String str = contents.getText().toString();
 
             fw.write(str);
-            Toast.makeText(getActivity(), "Save done", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "저장되었습니다", Toast.LENGTH_SHORT).show();
 
             fw.flush();
             fw.close();
