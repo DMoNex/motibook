@@ -45,12 +45,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AddBookFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-
 public class AddBookFragment extends Fragment implements OnBackPressedListener {
     private Spinner filter;
     private SearchView bookSearch;

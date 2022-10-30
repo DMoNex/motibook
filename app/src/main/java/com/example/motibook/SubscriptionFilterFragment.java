@@ -19,6 +19,7 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -39,6 +40,8 @@ import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import android.content.SharedPreferences;
 
@@ -56,12 +59,13 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
     private Spinner regionFilter;
     private Spinner subRegionFilter;
+    private Spinner eventTypeFilter;
+    private EditText eventNameFilter;
+    private Button mBtnSubmitQuery;
 
     ArrayAdapter<CharSequence> regionFilterAdapter;
     ArrayAdapter<CharSequence> subRegionFilterAdapter;
-
-    String regionCodeHead;
-    String regionCodeTail;
+    ArrayAdapter<CharSequence> eventTypeFilterAdapter;
 
     GoogleAccountCredential mCredential;
     MainActivity parents;
@@ -77,10 +81,17 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
     private Button mBtnCalendarCreate;
 
-    /**
-     * Google Calendar API에 접근하기 위해 사용되는 구글 캘린더 API 서비스 객체
-     */
+    // Google Calendar API에 접근하기 위해 사용되는 구글 캘린더 API 서비스 객체
     private com.google.api.services.calendar.Calendar mService = null;
+
+    // DB 객체
+    private FirebaseDatabase db;
+    private DatabaseReference dbRef;
+    
+    // for EventSearch
+    String regionCodeHead;
+    String regionCodeTail;
+    private int queryEventType;
 
     public SubscriptionFilterFragment() {
         // Required empty public constructor
@@ -105,27 +116,27 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
         }
 
-
         mCredential = GoogleAccountCredential.usingOAuth2(
                         getActivity().getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
 
         getResultsFromApi();
+
+        db = FirebaseDatabase.getInstance();
+        dbRef = db.getReference();
+
+        queryEventType = 0;
     }
 
     private String getResultsFromApi() {
 
         if (!isGooglePlayServicesAvailable()) { // Google Play Services를 사용할 수 없는 경우
-
             acquireGooglePlayServices();
         } else if (mCredential.getSelectedAccountName() == null) { // 유효한 Google 계정이 선택되어 있지 않은 경우
-
             chooseAccount();
         } else if (!isDeviceOnline()) {    // 인터넷을 사용할 수 없는 경우
-
             Toast.makeText(parents, "인터넷을 먼저 연결해주세요.", Toast.LENGTH_SHORT).show();
         } else {
-
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
 
@@ -139,12 +150,10 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
             new MakeRequestTask().execute();
         }
-
         return null;
     }
 
     private class MakeRequestTask extends AsyncTask<Void, Void, String> {
-
         private Exception mLastError = null;
         private MainActivity mActivity;
         List<String> eventStrings = new ArrayList<String>();
@@ -152,20 +161,15 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         @Override
         protected String doInBackground(Void... params) {
             try {
-
                 if ( mID == 1) {
-
                     return createCalendar();
 
                 }else if (mID == 2) {
-
                     return addEvent();
                 }
                 else if (mID == 3) {
-
                     return getEvent();
                 }
-
             } catch (Exception e) {
                 mLastError = e;
                 cancel(true);
@@ -176,12 +180,10 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         }
 
         private String getEvent() throws IOException {
-
             DateTime now = new DateTime(System.currentTimeMillis());
 
             String calendarID = getCalendarID("CalendarTitle");
             if ( calendarID == null ){
-
                 return "캘린더를 먼저 생성하세요.";
             }
             Events events = mService.events().list(calendarID)//"primary")
@@ -194,29 +196,21 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
 
             for (Event event : items) {
-
                 DateTime start = event.getStart().getDateTime();
                 if (start == null) {
-
                     // 모든 이벤트가 시작 시간을 갖고 있지는 않다. 그런 경우 시작 날짜만 사용
                     start = event.getStart().getDate();
                 }
-
-
                 eventStrings.add(String.format("%s \n (%s)", event.getSummary(), start));
             }
             return eventStrings.size() + "개의 데이터를 가져왔습니다.";
         }
 
-        /*
-         * 선택되어 있는 Google 계정에 새 캘린더를 추가한다.
-         */
+        // 선택되어 있는 Google 계정에 새 캘린더를 추가한다.
         private String createCalendar() throws IOException {
-
             String ids = getCalendarID("Motibook");
 
             if ( ids != null ){
-
                 return "이미 캘린더가 생성되어 있습니다. ";
             }
 
@@ -253,7 +247,6 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         }
 
         private String addEvent() {
-
             String calendarID = getCalendarID("Motibook");
 
             if ( calendarID == null ){
@@ -264,7 +257,6 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
                     .setSummary("구글 캘린더 테스트")
                     .setLocation("서울시")
                     .setDescription("캘린더에 이벤트 추가하는 것을 테스트합니다.");
-
 
             java.util.Calendar calander;
 
@@ -283,7 +275,6 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
             Log.d( "@@@", datetime );
 
-
             DateTime endDateTime = new  DateTime(datetime);
             EventDateTime end = new EventDateTime()
                     .setDateTime(endDateTime)
@@ -292,7 +283,6 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
             //String[] recurrence = new String[]{"RRULE:FREQ=DAILY;COUNT=2"};
             //event.setRecurrence(Arrays.asList(recurrence));
-
 
             try {
                 event = mService.events().insert(calendarID, event).execute();
@@ -310,9 +300,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
     }
 
 
-    /*
-     * 선택되어 있는 Google 계정에 새 캘린더를 추가한다.
-     */
+    // 선택되어 있는 Google 계정에 새 캘린더를 추가한다.
     private String createCalendar() throws IOException {
 
         String ids = getCalendarID("Motibook");
@@ -347,17 +335,13 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         return "캘린더가 생성되었습니다.";
     }
 
-    /*
-     * 캘린더 이름에 대응하는 캘린더 ID를 리턴
-     */
+    // 캘린더 이름에 대응하는 캘린더 ID를 리턴
     private String getCalendarID(String calendarTitle){
-
         String id = null;
 
         // Iterate through entries in calendar list
         String pageToken = null;
         do {
-
             com.google.api.services.calendar.model.CalendarList calendarList = null;
 
             try {
@@ -372,11 +356,8 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
             }
             List<CalendarListEntry> items = calendarList.getItems();
 
-
             for (CalendarListEntry calendarListEntry : items) {
-
                 if (calendarListEntry.getSummary().toString().equals(calendarTitle)) {
-
                     id = calendarListEntry.getId().toString();
                 }
             }
@@ -390,9 +371,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
 
 
-    /**
-     * 안드로이드 디바이스에 최신 버전의 Google Play Services가 설치되어 있는지 확인
-     */
+    // 안드로이드 디바이스에 최신 버전의 Google Play Services가 설치되어 있는지 확인
     private boolean isGooglePlayServicesAvailable() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         final int connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(parents);
@@ -404,7 +383,6 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
      * 대화상자를 보여줌.
      */
     private void acquireGooglePlayServices() {
-
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         final int connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(parents);
         if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
@@ -415,9 +393,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
     /*
      * 안드로이드 디바이스에 Google Play Services가 설치 안되어 있거나 오래된 버전인 경우 보여주는 대화상자
      */
-    void showGooglePlayServicesAvailabilityErrorDialog(
-            final int connectionStatusCode
-    ) {
+    void showGooglePlayServicesAvailabilityErrorDialog( final int connectionStatusCode ) {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         Dialog dialog = apiAvailability.getErrorDialog(
                 parents,
@@ -435,14 +411,11 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
      */
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
     private void chooseAccount() {
-
         // GET_ACCOUNTS 권한을 가지고 있다면
         if (EasyPermissions.hasPermissions(parents, Manifest.permission.GET_ACCOUNTS)) {
-
             // MainActivity 에서 로그인한 정보를 가져온다.
             String accountName = parents.acc.getEmail();
             if (parents.acc != null && accountName != null) {
-
                 // 선택된 구글 계정 이름으로 설정한다.
                 //mCredential.setSelectedAccountName(accountName);
                 mCredential.setSelectedAccount(new Account(accountName, "com.example.motibook"));
@@ -460,11 +433,8 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         }
     }
 
-    /*
-     * 안드로이드 디바이스가 인터넷 연결되어 있는지 확인한다. 연결되어 있다면 True 리턴, 아니면 False 리턴
-     */
+    // 안드로이드 디바이스가 인터넷 연결되어 있는지 확인한다. 연결되어 있다면 True 리턴, 아니면 False 리턴
     private boolean isDeviceOnline() {
-
         ConnectivityManager connMgr = (ConnectivityManager) parents.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -479,6 +449,8 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
         regionFilter = (Spinner)rootView.findViewById(R.id.RegionAddr1Spinner);
         subRegionFilter = (Spinner)rootView.findViewById(R.id.RegionAddr2Spinner);
+        eventTypeFilter = (Spinner)rootView.findViewById(R.id.eventTypeSpinner);
+        eventNameFilter = (EditText)rootView.findViewById(R.id.eventNameEditText);
 
         //regionFilter 항목을 준비한 Array 와 연결해줄 Adapter
         regionFilterAdapter = ArrayAdapter.createFromResource(
@@ -490,8 +462,28 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         //regionFilter 와 Adapter 연결
         regionFilter.setAdapter(regionFilterAdapter);
 
-        mBtnCalendarCreate = (Button) rootView.findViewById(R.id.btnCreateCalendar);
+        //eventTypeFilter 항목을 준비한 Array 와 연결해줄 Adapter
+        eventTypeFilterAdapter = ArrayAdapter.createFromResource(
+                getActivity(), R.array.eventTypeArray, android.R.layout.simple_spinner_item);
+        //eventTypeFilter 의 작동방식 지정
+        eventTypeFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //eventTypeFilter 리스너
+        eventTypeFilter.setOnItemSelectedListener(eventTypeFilterListener);
+        //regionFilter 와 Adapter 연결
+        eventTypeFilter.setAdapter(eventTypeFilterAdapter);
 
+        //검색버튼
+        mBtnSubmitQuery = (Button)rootView.findViewById(R.id.filterSubmitButton);
+
+        mBtnSubmitQuery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(getActivity(), "Submit:" + regionCodeHead + regionCodeTail + eventNameFilter.getText() + queryEventType, Toast.LENGTH_SHORT).show();
+                // TODO : DB로 쿼리 전송 후 받아오기.
+            }
+        });
+
+        mBtnCalendarCreate = (Button) rootView.findViewById(R.id.btnCreateCalendar);
 
         mBtnCalendarCreate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -511,6 +503,27 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         MainActivity activity = (MainActivity) getActivity();
         activity.FragmentView(1);
     }
+
+    // eventTypeFilterListener (Spinner)
+    AdapterView.OnItemSelectedListener eventTypeFilterListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            switch (position) {
+                case 0: // 전체
+                    queryEventType = 0;
+                case 1: // 행사
+                    queryEventType = 1;
+                case 2: // 전시
+                    queryEventType = 2;
+                case 3: // 강연
+                    queryEventType = 3;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
 
     // regionFilterListener (Spinner)
     AdapterView.OnItemSelectedListener regionFilterListener = new AdapterView.OnItemSelectedListener() {

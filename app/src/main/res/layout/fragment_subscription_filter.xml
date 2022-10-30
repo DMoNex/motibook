@@ -78,8 +78,73 @@
             android:id="@+id/btnCreateCalendar"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:text="Create Calendar Test"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="Google Calendar Check"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/subsFilterEventNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="220dp"
+            android:text="행사명"
+            android:textColor="@color/black"
+            android:textIsSelectable="false"
+            android:textSize="25dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/RegionAddr2Spinner" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/eventNameEditText"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:ems="10"
+            android:hint="행사 이름을 입력하세요"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subsFilterEventNameText" />
+
+        <TextView
+            android:id="@+id/subsFilterEventType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="350dp"
+            android:text="행사종류"
+            android:textColor="@color/black"
+            android:textIsSelectable="false"
+            android:textSize="25dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/eventTypeSpinner"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="RegionAddrSpinner"
+            android:dropDownWidth="100dp"
+            android:spinnerMode="dropdown"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subsFilterEventType" />
+
+        <Button
+            android:id="@+id/filterSubmitButton"
+            android:layout_width="117dp"
+            android:layout_height="51dp"
+            android:layout_marginTop="400dp"
+            android:layout_marginEnd="20dp"
+            android:text="조회하기"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

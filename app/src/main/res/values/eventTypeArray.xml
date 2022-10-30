@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="eventTypeArray">
+        <item>전체</item>
+        <item>행사</item>
+        <item>전시</item>
+        <item>강연</item>
+    </string-array>
+</resources>
