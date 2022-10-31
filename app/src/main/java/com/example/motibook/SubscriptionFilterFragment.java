@@ -70,7 +70,12 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
     GoogleAccountCredential mCredential;
     MainActivity parents;
 
-    int mID = 0;
+    private int mID = 0;
+    private String eventSummary = "";
+    private String eventLocation = "";
+    private String eventDescription = "";
+    private DateTime eventDateTime;
+
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
@@ -178,6 +183,14 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
             return null;
         }
 
+        @Override
+        protected void onPostExecute(String output) {
+
+            if ( mID == 3 ) {
+                // 여기서 ArrayList, eventStrings 으로 추가 작업
+            }
+        }
+
         private String getEvent() throws IOException {
             DateTime now = new DateTime(System.currentTimeMillis());
 
@@ -200,8 +213,15 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
                     // 모든 이벤트가 시작 시간을 갖고 있지는 않다. 그런 경우 시작 날짜만 사용
                     start = event.getStart().getDate();
                 }
-                eventStrings.add(String.format("%s \n (%s)", event.getSummary(), start));
+
+                String sum = event.getSummary(); // 이벤트 제목
+                String loc = event.getLocation(); // 이벤트 장소
+                String des = event.getDescription(); // 이벤트 설명
+                String time = start.toStringRfc3339(); // 이벤트 시간
+
+                eventStrings.add(String.format("%s\n%s\n장소: %s\n시간: ", sum, des, loc, time));
             }
+
             return eventStrings.size() + "개의 데이터를 가져왔습니다.";
         }
 
@@ -232,7 +252,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
             CalendarListEntry calendarListEntry = mService.calendarList().get(calendarId).execute();
 
             // 캘린더의 배경색을 파란색으로 표시  RGB
-            calendarListEntry.setBackgroundColor("#0000ff");
+            calendarListEntry.setBackgroundColor("#0000BB");
 
             // 변경한 내용을 구글 캘린더에 반영
             CalendarListEntry updatedCalendarListEntry =
@@ -253,28 +273,20 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
             }
 
             Event event = new Event()
-                    .setSummary("구글 캘린더 테스트")
-                    .setLocation("서울시")
-                    .setDescription("캘린더에 이벤트 추가하는 것을 테스트합니다.");
+                    .setSummary(eventSummary)
+                    .setLocation(eventLocation)
+                    .setDescription(eventDescription);
 
             java.util.Calendar calander;
 
-            calander = java.util.Calendar.getInstance();
-            SimpleDateFormat simpledateformat;
-            //simpledateformat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssZ", Locale.KOREA);
-            // Z에 대응하여 +0900이 입력되어 문제 생겨 수작업으로 입력
-            simpledateformat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss+09:00", Locale.KOREA);
-            String datetime = simpledateformat.format(calander.getTime());
-
-            DateTime startDateTime = new DateTime(datetime);
+            DateTime startDateTime = eventDateTime;
             EventDateTime start = new EventDateTime()
                     .setDateTime(startDateTime)
                     .setTimeZone("Asia/Seoul");
             event.setStart(start);
 
-            Log.d( "@@@", datetime );
 
-            DateTime endDateTime = new  DateTime(datetime);
+            DateTime endDateTime = eventDateTime;
             EventDateTime end = new EventDateTime()
                     .setDateTime(endDateTime)
                     .setTimeZone("Asia/Seoul");
@@ -298,6 +310,17 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         //////////////////////////////////////////////////////////////////////////////
     }
 
+    private void setEvent(String sum, String loc, String des, String date) {
+        eventSummary = sum;
+        eventLocation = loc;
+        eventDescription = des;
+
+        // 구글의 DateTime은 rfc3339 포맷을 사용
+        // date 는 "yyyy-MM-ddTHH:mm:ss" 와 같은 문자열으로 넣어주면 된다.
+        eventDateTime = new DateTime( date + "+09:00");
+
+        return;
+    }
 
     // 선택되어 있는 Google 계정에 새 캘린더를 추가한다.
     private String createCalendar() throws IOException {
@@ -479,6 +502,27 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
             public void onClick(View v) {
                 //Toast.makeText(getActivity(), "Submit:" + regionCodeHead + regionCodeTail + eventNameFilter.getText() + queryEventType, Toast.LENGTH_SHORT).show();
                 // TODO : DB로 쿼리 전송 후 받아오기.
+
+                // 캘린더에 일정 추가
+                {
+                    mID = 2;
+                    // 구글의 DateTime은 rfc3339 포맷을 사용
+                    // date 는 "yyyy-MM-ddTHH:mm:ss" 와 같은 문자열으로 넣어주면 된다.
+                    setEvent("춘천시 대양도서관 바자회",               // 제목
+                            "춘천 대양도서관",                         // 장소
+                            "춘천시에서 주관하는 대양도서관 바자회입니다.", // 설명
+                            "2022-10-24T09:00:00");                 // 날짜
+
+                    getResultsFromApi();
+                }
+
+                //캘린더에 있는 모든 일정 얻기
+                {
+                    mID = 3;
+                    getResultsFromApi();
+                    // 얻은 이벤트는 onPostExecute() 에서 eventStrings 으로 작업
+                    // 혹은 getEvent에서 추가로 아이템을 불러와서 작업
+                }
             }
         });
 
@@ -488,9 +532,6 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
             @Override
             public void onClick(View v) {
                 mID = 1;           // 캘린더 생성
-                // mID = 2;        // 캘린더 이벤트 추가
-                // mID = 3;        // 캘린더 이벤트 얻기
-
                 getResultsFromApi();
             }
         });
