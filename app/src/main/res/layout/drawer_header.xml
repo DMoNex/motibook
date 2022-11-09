@@ -24,7 +24,7 @@
         android:layout_gravity="center"
         android:layout_marginStart="24dp"
         android:layout_marginTop="36dp"
-        android:text="김김김"
+        android:text="김홍익"
         android:textColor="#FF000000"
         android:textSize="30sp"
         app:layout_constraintStart_toEndOf="@+id/namecard_image"

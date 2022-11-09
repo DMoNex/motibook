@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.media.metrics.Event;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public StatisticsData statisticsData;
@@ -48,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     String lastFilePath;
+
+    public ArrayList<EventListItem> eventListItems;
 
 
     GoogleSignInClient mGoogleSignInClient;
@@ -122,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fr.close();
         } catch(IOException e) {
         }
+
+        eventListItems = new ArrayList<EventListItem>();
     }
 
     private void signIn() {
@@ -219,6 +225,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onAddBookFragment() {
         AddBookFragment addBookFragment = new AddBookFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.Screen, addBookFragment);
+        transaction.commit();
+    }
+
+    public void onEventSearchFragment() {
+        EventListFragment eventListFragment = new EventListFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().replace(R.id.Screen, eventListFragment);
         transaction.commit();
     }
 

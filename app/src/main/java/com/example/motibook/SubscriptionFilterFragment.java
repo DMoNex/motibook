@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -25,6 +26,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
@@ -40,9 +43,9 @@ import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import android.content.SharedPreferences;
 
 import java.io.IOException;
@@ -51,12 +54,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class SubscriptionFilterFragment extends Fragment implements OnBackPressedListener {
-
+    MainActivity mainAct;
     private Spinner regionFilter;
     private Spinner subRegionFilter;
     private Spinner eventTypeFilter;
@@ -90,13 +94,26 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
     private com.google.api.services.calendar.Calendar mService = null;
 
     // DB 객체
-    private FirebaseDatabase db;
-    private DatabaseReference dbRef;
-    
+    private FirebaseFirestore db;
+
     // for EventSearch
     String regionCodeHead;
     String regionCodeTail;
     private int queryEventType;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        mainAct = (MainActivity)getActivity();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        mainAct = null;
+    }
 
     public SubscriptionFilterFragment() {
         // Required empty public constructor
@@ -127,8 +144,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
         getResultsFromApi();
 
-        db = FirebaseDatabase.getInstance();
-        dbRef = db.getReference();
+        db = FirebaseFirestore.getInstance();
 
         queryEventType = 0;
     }
@@ -165,13 +181,12 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         @Override
         protected String doInBackground(Void... params) {
             try {
-                if ( mID == 1) {
+                if (mID == 1) {
                     return createCalendar();
 
-                }else if (mID == 2) {
+                } else if (mID == 2) {
                     return addEvent();
-                }
-                else if (mID == 3) {
+                } else if (mID == 3) {
                     return getEvent();
                 }
             } catch (Exception e) {
@@ -186,7 +201,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         @Override
         protected void onPostExecute(String output) {
 
-            if ( mID == 3 ) {
+            if (mID == 3) {
                 // 여기서 ArrayList, eventStrings 으로 추가 작업
             }
         }
@@ -195,7 +210,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
             DateTime now = new DateTime(System.currentTimeMillis());
 
             String calendarID = getCalendarID("CalendarTitle");
-            if ( calendarID == null ){
+            if (calendarID == null) {
                 return "캘린더를 먼저 생성하세요.";
             }
             Events events = mService.events().list(calendarID)//"primary")
@@ -229,7 +244,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         private String createCalendar() throws IOException {
             String ids = getCalendarID("Motibook");
 
-            if ( ids != null ){
+            if (ids != null) {
                 return "이미 캘린더가 생성되어 있습니다. ";
             }
 
@@ -268,7 +283,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         private String addEvent() {
             String calendarID = getCalendarID("Motibook");
 
-            if ( calendarID == null ){
+            if (calendarID == null) {
                 return "캘린더를 먼저 생성하세요.";
             }
 
@@ -310,14 +325,14 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         //////////////////////////////////////////////////////////////////////////////
     }
 
-    private void setEvent(String sum, String loc, String des, String date) {
-        eventSummary = sum;
-        eventLocation = loc;
-        eventDescription = des;
+    private void setEvent(String summary, String location, String description, String date) {
+        eventSummary = summary;
+        eventLocation = location;
+        eventDescription = description;
 
         // 구글의 DateTime은 rfc3339 포맷을 사용
         // date 는 "yyyy-MM-ddTHH:mm:ss" 와 같은 문자열으로 넣어주면 된다.
-        eventDateTime = new DateTime( date + "+09:00");
+        eventDateTime = new DateTime(date + "+09:00");
 
         return;
     }
@@ -327,9 +342,9 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
         String ids = getCalendarID("Motibook");
 
-        if ( ids != null ){
+        if (ids != null) {
             return "이미 캘린더가 생성되어 있습니다. ";
-        } else if ( ids == "Exception") {
+        } else if (ids == "Exception") {
             return "알 수 없는 이유로 캘린더를 생성할 수 없습니다.";
         }
 
@@ -358,7 +373,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
     }
 
     // 캘린더 이름에 대응하는 캘린더 ID를 리턴
-    private String getCalendarID(String calendarTitle){
+    private String getCalendarID(String calendarTitle) {
         String id = null;
 
         // Iterate through entries in calendar list
@@ -371,7 +386,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
             } catch (UserRecoverableAuthIOException e) {
                 // 사용하지 않는 함수임으로 수정 필요
                 startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
-            }catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             } catch (Exception e) {
                 Toast.makeText(parents, e.toString(), Toast.LENGTH_SHORT).show();
@@ -390,7 +405,6 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
         return id;
     }
-
 
 
     // 안드로이드 디바이스에 최신 버전의 Google Play Services가 설치되어 있는지 확인
@@ -415,7 +429,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
     /*
      * 안드로이드 디바이스에 Google Play Services가 설치 안되어 있거나 오래된 버전인 경우 보여주는 대화상자
      */
-    void showGooglePlayServicesAvailabilityErrorDialog( final int connectionStatusCode ) {
+    void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode) {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         Dialog dialog = apiAvailability.getErrorDialog(
                 parents,
@@ -423,7 +437,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
                 REQUEST_GOOGLE_PLAY_SERVICES
         );
         dialog.show();
-}
+    }
 
     /*
      * Google Calendar API의 자격 증명( credentials ) 에 사용할 구글 계정을 설정한다.
@@ -469,10 +483,10 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_subscription_filter, container, false);
 
-        regionFilter = (Spinner)rootView.findViewById(R.id.RegionAddr1Spinner);
-        subRegionFilter = (Spinner)rootView.findViewById(R.id.RegionAddr2Spinner);
-        eventTypeFilter = (Spinner)rootView.findViewById(R.id.eventTypeSpinner);
-        eventNameFilter = (EditText)rootView.findViewById(R.id.eventNameEditText);
+        regionFilter = (Spinner) rootView.findViewById(R.id.RegionAddr1Spinner);
+        subRegionFilter = (Spinner) rootView.findViewById(R.id.RegionAddr2Spinner);
+        eventTypeFilter = (Spinner) rootView.findViewById(R.id.eventTypeSpinner);
+        eventNameFilter = (EditText) rootView.findViewById(R.id.eventNameEditText);
 
         //regionFilter 항목을 준비한 Array 와 연결해줄 Adapter
         regionFilterAdapter = ArrayAdapter.createFromResource(
@@ -495,8 +509,9 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         eventTypeFilter.setAdapter(eventTypeFilterAdapter);
 
         //검색버튼
-        mBtnSubmitQuery = (Button)rootView.findViewById(R.id.filterSubmitButton);
-
+        mBtnSubmitQuery = (Button) rootView.findViewById(R.id.filterSubmitButton);
+        mBtnSubmitQuery.setOnClickListener(eventSearchListener);
+/*
         mBtnSubmitQuery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -525,7 +540,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
                 }
             }
         });
-
+*/
         mBtnCalendarCreate = (Button) rootView.findViewById(R.id.btnCreateCalendar);
 
         mBtnCalendarCreate.setOnClickListener(new View.OnClickListener() {
@@ -544,6 +559,55 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         MainActivity activity = (MainActivity) getActivity();
         activity.FragmentView(1);
     }
+
+    View.OnClickListener eventSearchListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mainAct.eventListItems.clear();
+
+            db.collection("libEvent").whereEqualTo("addressHead", "11").whereEqualTo("addressTail", "020").get().
+                    addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful()) {
+                                for(QueryDocumentSnapshot doc : task.getResult()) {
+                                    Map<String, Object> data = doc.getData();
+                                    Toast.makeText(getActivity(), "Result : " + data.get("eventName"), Toast.LENGTH_SHORT).show();
+
+                                    EventListItem eventListItem = new EventListItem(data.get("addressHead").toString(),
+                                                                                    data.get("addressTail").toString(),
+                                                                                    data.get("date").toString(),
+                                                                                    data.get("startTime").toString(),
+                                                                                    data.get("endTime").toString(),
+                                                                                    data.get("eventName").toString(),
+                                                                                    Integer.parseInt(data.get("eventType").toString()),
+                                                                                    data.get("locate").toString());
+
+                                    Toast.makeText(getActivity(), "Query", Toast.LENGTH_SHORT).show();
+
+                                    if(data.get("authorName") != null) {
+                                        eventListItem.setAuthorName(data.get("authorName").toString());
+                                    }
+
+                                    if(data.get("bookName") != null) {
+                                        eventListItem.setBookName(data.get("bookName").toString());
+                                    }
+
+                                    if(data.get("URL") != null) {
+                                        eventListItem.setURL(data.get("URL").toString());
+                                    }
+                                    mainAct.eventListItems.add(eventListItem);
+                                }
+
+                                // 성공하면 List 출력
+                                mainAct.onEventSearchFragment();
+                            } else {
+                                Toast.makeText(getActivity(), "Query Fail : " + task.getException(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+    };
 
     // eventTypeFilterListener (Spinner)
     AdapterView.OnItemSelectedListener eventTypeFilterListener = new AdapterView.OnItemSelectedListener() {

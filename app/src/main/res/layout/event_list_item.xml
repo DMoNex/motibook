@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/eventList_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:layoutDescription="@xml/event_list_item_scene">
+
+    <TextView
+        android:id="@+id/eventList_eventName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:text="eventList_eventName"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:id="@+id/eventList_period"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/eventList_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:text="11월 25일"
+            android:textColor="#FF606060"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/eventList_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp"
+            android:layout_weight="0"
+            android:gravity="right"
+            android:text="00시 00분 ~ 23시 59분"
+            android:textColor="#FF606060"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/eventList_locate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:text="서울특별시 마포구"
+        android:textColor="#FF606060"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/eventList_locateDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:text="홍익대학교 중앙도서관"
+        android:textColor="#FF606060"
+        android:textSize="16sp" />
+
+</LinearLayout>
+
+
+
+
+<!--
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/noteList_Item"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="vertical">
+
+<TextView
+    android:id="@+id/bookList_bookName"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:layout_marginTop="16dp"
+    android:gravity="center"
+    android:text="bookList_bookName"
+    android:textColor="#000000"
+    android:textSize="20sp" />
+
+<TextView
+    android:id="@+id/bookList_author"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="right"
+    android:layout_marginRight="20dp"
+    android:gravity="center"
+    android:text="noteList_author"
+    android:textColor="#808080" />
+
+</LinearLayout>
+-->
