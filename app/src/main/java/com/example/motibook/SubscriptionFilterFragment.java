@@ -533,8 +533,6 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
                                 Integer.parseInt(data.get("eventType").toString()),
                                 data.get("locate").toString());
 
-                        Toast.makeText(getActivity(), "Query", Toast.LENGTH_SHORT).show();
-
                         if(data.get("authorName") != null) {
                             eventListItem.setAuthorName(data.get("authorName").toString());
                         }
@@ -560,6 +558,9 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
                     // 성공하면 List 출력 (List 1개 이상)
                     if(mainAct.eventListItems.size() > 0) {
                         mainAct.onEventSearchFragment();
+                    }
+                    else {
+                        Toast.makeText(getActivity(), "검색 조건에 맞는 행사가 없습니다", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Log.v("QueryFail:", task.getException().toString());
