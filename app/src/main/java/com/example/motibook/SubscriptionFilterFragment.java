@@ -43,7 +43,9 @@ import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import android.content.SharedPreferences;
@@ -52,6 +54,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -88,7 +91,9 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = {CalendarScopes.CALENDAR};
 
-    private Button mBtnCalendarCreate;
+    private Button mBtnCalendarCreate; // 나중에 삭제
+
+    OnCompleteListener<QuerySnapshot> querySnapshotOnCompleteListener;
 
     // Google Calendar API에 접근하기 위해 사용되는 구글 캘린더 API 서비스 객체
     private com.google.api.services.calendar.Calendar mService = null;
@@ -511,6 +516,56 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         //검색버튼
         mBtnSubmitQuery = (Button) rootView.findViewById(R.id.filterSubmitButton);
         mBtnSubmitQuery.setOnClickListener(eventSearchListener);
+
+        querySnapshotOnCompleteListener = new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    for(QueryDocumentSnapshot doc : task.getResult()) {
+                        Map<String, Object> data = doc.getData();
+
+                        EventListItem eventListItem = new EventListItem(data.get("addressHead").toString(),
+                                data.get("addressTail").toString(),
+                                data.get("date").toString(),
+                                data.get("startTime").toString(),
+                                data.get("endTime").toString(),
+                                data.get("eventName").toString(),
+                                Integer.parseInt(data.get("eventType").toString()),
+                                data.get("locate").toString());
+
+                        Toast.makeText(getActivity(), "Query", Toast.LENGTH_SHORT).show();
+
+                        if(data.get("authorName") != null) {
+                            eventListItem.setAuthorName(data.get("authorName").toString());
+                        }
+
+                        if(data.get("bookName") != null) {
+                            eventListItem.setBookName(data.get("bookName").toString());
+                        }
+
+                        if(data.get("URL") != null) {
+                            eventListItem.setURL(data.get("URL").toString());
+                        }
+
+                        if(eventNameFilter.getText().toString().isEmpty()) {
+                            mainAct.eventListItems.add(eventListItem);
+                        }
+                        else {
+                            if(data.get("eventName").toString().contains(eventNameFilter.getText())) {
+                                mainAct.eventListItems.add(eventListItem);
+                            }
+                        }
+                    }
+
+                    // 성공하면 List 출력 (List 1개 이상)
+                    if(mainAct.eventListItems.size() > 0) {
+                        mainAct.onEventSearchFragment();
+                    }
+                } else {
+                    Log.v("QueryFail:", task.getException().toString());
+                }
+            }
+        };
 /*
         mBtnSubmitQuery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -565,47 +620,37 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         public void onClick(View v) {
             mainAct.eventListItems.clear();
 
-            db.collection("libEvent").whereEqualTo("addressHead", "11").whereEqualTo("addressTail", "020").get().
-                    addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful()) {
-                                for(QueryDocumentSnapshot doc : task.getResult()) {
-                                    Map<String, Object> data = doc.getData();
-                                    Toast.makeText(getActivity(), "Result : " + data.get("eventName"), Toast.LENGTH_SHORT).show();
+            // 현재 날짜 (string)
+            java.util.Calendar calendar = java.util.Calendar.getInstance();
+            calendar.add(java.util.Calendar.MONTH, 1);
+            SimpleDateFormat curDateFormat = new SimpleDateFormat("yyMMdd");
+            String strCurDate = curDateFormat.format(new Date());
+            String strEndDate = "" + calendar.get(java.util.Calendar.YEAR)
+                                   + (calendar.get(java.util.Calendar.MONTH) + 1)
+                                   + calendar.get(java.util.Calendar.DATE);
 
-                                    EventListItem eventListItem = new EventListItem(data.get("addressHead").toString(),
-                                                                                    data.get("addressTail").toString(),
-                                                                                    data.get("date").toString(),
-                                                                                    data.get("startTime").toString(),
-                                                                                    data.get("endTime").toString(),
-                                                                                    data.get("eventName").toString(),
-                                                                                    Integer.parseInt(data.get("eventType").toString()),
-                                                                                    data.get("locate").toString());
+            // collection 객체 생성
+            CollectionReference eventRef = db.collection("libEvent");
 
-                                    Toast.makeText(getActivity(), "Query", Toast.LENGTH_SHORT).show();
+            // Query 객체 생성
+            // 현재 날짜로부터 1달간의 데이터 조회 (strCurDate ~ strEndDate.substring(2))
+            Query eventQuery = eventRef.whereGreaterThan("date", Integer.parseInt(strCurDate))
+                    .whereLessThan("date", Integer.parseInt(strEndDate.substring(2)));
 
-                                    if(data.get("authorName") != null) {
-                                        eventListItem.setAuthorName(data.get("authorName").toString());
-                                    }
+            // 지역 Head 필터 있으면
+            if(!regionCodeHead.equals("*")) {
+                eventQuery = eventQuery.whereEqualTo("addressHead", regionCodeHead);
+            }
 
-                                    if(data.get("bookName") != null) {
-                                        eventListItem.setBookName(data.get("bookName").toString());
-                                    }
+            if(!regionCodeTail.equals("*")) {
+                eventQuery = eventQuery.whereEqualTo("addressTail", regionCodeTail);
+            }
 
-                                    if(data.get("URL") != null) {
-                                        eventListItem.setURL(data.get("URL").toString());
-                                    }
-                                    mainAct.eventListItems.add(eventListItem);
-                                }
+            if(queryEventType != 0) {
+                eventQuery = eventQuery.whereEqualTo("eventType", queryEventType);
+            }
 
-                                // 성공하면 List 출력
-                                mainAct.onEventSearchFragment();
-                            } else {
-                                Toast.makeText(getActivity(), "Query Fail : " + task.getException(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+            eventQuery.get().addOnCompleteListener(querySnapshotOnCompleteListener);
         }
     };
 
@@ -616,12 +661,16 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
             switch (position) {
                 case 0: // 전체
                     queryEventType = 0;
+                    break;
                 case 1: // 행사
                     queryEventType = 1;
+                    break;
                 case 2: // 전시
                     queryEventType = 2;
+                    break;
                 case 3: // 강연
                     queryEventType = 3;
+                    break;
             }
         }
 

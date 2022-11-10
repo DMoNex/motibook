@@ -200,7 +200,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
             drawerLayout.closeDrawer(GravityCompat.END);
         } else if (subFragment != null) {
-            Toast.makeText(this,"True", Toast.LENGTH_LONG);
             ((OnBackPressedListener)subFragment).onBackPressed();
         } else {
             super.onBackPressed();
