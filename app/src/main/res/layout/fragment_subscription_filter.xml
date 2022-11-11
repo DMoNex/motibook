@@ -74,17 +74,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/RegionAddr1Spinner" />
 
-        <Button
-            android:id="@+id/btnCreateCalendar"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="10dp"
-            android:text="Google Calendar Check"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
         <TextView
             android:id="@+id/subsFilterEventNameText"
             android:layout_width="wrap_content"

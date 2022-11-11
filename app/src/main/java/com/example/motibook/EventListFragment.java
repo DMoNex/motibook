@@ -128,24 +128,44 @@ public class EventListFragment extends Fragment implements OnBackPressedListener
         eventListItemAdapter.setOnItemClickListener(new EventListItemAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int pos) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Add Calendar?");
                 builder.setMessage(String.format("이 행사를 달력에 추가하시겠습니까?\n\"%s\"", eventListItems.get(pos).getEventName()));
-                String[] typeConvert = new String[4];
-
 
                 builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
                     //예 눌렀을때의 이벤트 처리
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        String[] typeConvert = new String[4];
+                        typeConvert[0] = "기타";
+                        typeConvert[1] = "행사";
+                        typeConvert[2] = "전시";
+                        typeConvert[3] = "강연";
+                        String calendarContents = "";
+                        calendarContents += "행사유형 : " + typeConvert[eventListItems.get(pos).getEventType()];
+
+                        if(!eventListItems.get(pos).getBookName().isEmpty()) {
+                            calendarContents += "\n도서명 : " + eventListItems.get(pos).getBookName();
+                        }
+
+                        if(!eventListItems.get(pos).getAuthorName().isEmpty()) {
+                            calendarContents += "\n저자명 : " + eventListItems.get(pos).getAuthorName();
+                        }
+
+                        if(!eventListItems.get(pos).getURL().isEmpty()) {
+                            calendarContents += "\nURL : " + eventListItems.get(pos).getURL();
+                        }
+
                         // 구글의 DateTime은 rfc3339 포맷을 사용
                         // date 는 "yyyy-MM-ddTHH:mm:ss" 와 같은 문자열
                         setEvent(eventListItems.get(pos).getEventName(),             // 제목
-                                eventListItems.get(pos).getStrAddress() +    // 장소
-                                        eventListItems.get(pos).getLocate(),
-                                "춘천시에서 주관하는 대양도서관 바자회입니다.",   // 설명
+                                (eventListItems.get(pos).getStrAddress() +    // 장소
+                                        eventListItems.get(pos).getLocate()),
+                                calendarContents,   // 설명
                                 eventListItems.get(pos).getRFCTime_Start(),
                                 eventListItems.get(pos).getRFCTime_End());          // 날짜
+
+                        new EventListFragment.MakeRequestTask(2).execute();
 
                         Toast.makeText(getActivity(), "행사가 등록되었습니다.", Toast.LENGTH_LONG).show();
                     }
@@ -389,7 +409,8 @@ public class EventListFragment extends Fragment implements OnBackPressedListener
 
         // 구글의 DateTime은 rfc3339 포맷을 사용
         // date 는 "yyyy-MM-ddTHH:mm:ss" 와 같은 문자열으로 넣어주면 된다.
-        //eventDateTime = new DateTime(date + "+09:00");
+        eventDateStartTime = new DateTime(startDate);
+        eventDateEndTime = new DateTime(endDate);
 
         return;
     }
@@ -418,7 +439,7 @@ public class EventListFragment extends Fragment implements OnBackPressedListener
         // 구글 캘린더의 캘린더 목록에서 새로 만든 캘린더를 검색
         CalendarListEntry calendarListEntry = mService.calendarList().get(calendarId).execute();
         // 캘린더의 배경색을 파란색으로 표시  RGB
-        calendarListEntry.setBackgroundColor("#0000ff");
+        calendarListEntry.setBackgroundColor("#99FFCC");
         // 변경한 내용을 구글 캘린더에 반영
         CalendarListEntry updatedCalendarListEntry =
                 mService.calendarList()

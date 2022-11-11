@@ -142,8 +142,7 @@ public class EventListItem {
                   date.substring(2, 4) + "-" +
                   date.substring(4, 6) + "T" +
                   startTime.substring(0, 2) + ":" +
-                  startTime.substring(2, 4) + ":" +
-                  startTime.substring(4, 6);
+                  startTime.substring(2, 4) + ":00";
 
         return result;
     }
@@ -156,8 +155,7 @@ public class EventListItem {
                 date.substring(2, 4) + "-" +
                 date.substring(4, 6) + "T" +
                 endTime.substring(0, 2) + ":" +
-                endTime.substring(2, 4) + ":" +
-                endTime.substring(4, 6);
+                endTime.substring(2, 4) + ":00";
 
         return result;
     }
