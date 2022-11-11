@@ -134,6 +134,34 @@ public class EventListItem {
         this.URL = URL;
     }
 
+    public String getRFCTime_Start() {
+        // 구글의 DateTime은 rfc3339 포맷을 사용
+        // date 는 "yyyy-MM-ddTHH:mm:ss" 와 같은 문자열
+        String result = "20";
+        result += date.substring(0, 2) + "-" +
+                  date.substring(2, 4) + "-" +
+                  date.substring(4, 6) + "T" +
+                  startTime.substring(0, 2) + ":" +
+                  startTime.substring(2, 4) + ":" +
+                  startTime.substring(4, 6);
+
+        return result;
+    }
+
+    public String getRFCTime_End() {
+        // 구글의 DateTime은 rfc3339 포맷을 사용
+        // date 는 "yyyy-MM-ddTHH:mm:ss" 와 같은 문자열
+        String result = "20";
+        result += date.substring(0, 2) + "-" +
+                date.substring(2, 4) + "-" +
+                date.substring(4, 6) + "T" +
+                endTime.substring(0, 2) + ":" +
+                endTime.substring(2, 4) + ":" +
+                endTime.substring(4, 6);
+
+        return result;
+    }
+
     public String getStrAddress() {
         String strAddress = "";
         switch (this.addressHead) {

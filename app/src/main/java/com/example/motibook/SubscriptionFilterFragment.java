@@ -74,29 +74,29 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
     ArrayAdapter<CharSequence> subRegionFilterAdapter;
     ArrayAdapter<CharSequence> eventTypeFilterAdapter;
 
-    GoogleAccountCredential mCredential;
-    MainActivity parents;
+    GoogleAccountCredential mCredential; //vV
+    MainActivity parents; //v -> mainAct 대체
 
-    private int mID = 0;
-    private String eventSummary = "";
-    private String eventLocation = "";
-    private String eventDescription = "";
-    private DateTime eventDateTime;
+    private int mID = 0; //v
+    private String eventSummary = ""; //v
+    private String eventLocation = ""; //v
+    private String eventDescription = ""; //v
+    private DateTime eventDateTime; //v
 
-    static final int REQUEST_ACCOUNT_PICKER = 1000;
-    static final int REQUEST_AUTHORIZATION = 1001;
-    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
-    static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
+    static final int REQUEST_ACCOUNT_PICKER = 1000; //v
+    static final int REQUEST_AUTHORIZATION = 1001; //v
+    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002; //v
+    static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003; //v
 
-    private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] SCOPES = {CalendarScopes.CALENDAR};
+    private static final String PREF_ACCOUNT_NAME = "accountName"; //v
+    private static final String[] SCOPES = {CalendarScopes.CALENDAR}; //v
 
-    private Button mBtnCalendarCreate; // 나중에 삭제
+    private Button mBtnCalendarCreate; //v 나중에 삭제
 
     OnCompleteListener<QuerySnapshot> querySnapshotOnCompleteListener;
 
     // Google Calendar API에 접근하기 위해 사용되는 구글 캘린더 API 서비스 객체
-    private com.google.api.services.calendar.Calendar mService = null;
+    private com.google.api.services.calendar.Calendar mService = null; //v
 
     // DB 객체
     private FirebaseFirestore db;
@@ -124,7 +124,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         // Required empty public constructor
     }
 
-    public SubscriptionFilterFragment(MainActivity main) {
+    public SubscriptionFilterFragment(MainActivity main) { //v 추후 삭제
         // Required empty public constructor
         parents = main;
     }
@@ -145,16 +145,16 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
         mCredential = GoogleAccountCredential.usingOAuth2(
                         getActivity().getApplicationContext(), Arrays.asList(SCOPES))
-                .setBackOff(new ExponentialBackOff());
+                .setBackOff(new ExponentialBackOff()); //v
 
-        getResultsFromApi();
+        getResultsFromApi(); //v
 
         db = FirebaseFirestore.getInstance();
 
         queryEventType = 0;
     }
 
-    private String getResultsFromApi() {
+    private String getResultsFromApi() { //v
         if (!isGooglePlayServicesAvailable()) { // Google Play Services를 사용할 수 없는 경우
             acquireGooglePlayServices();
         } else if (mCredential.getSelectedAccountName() == null) { // 유효한 Google 계정이 선택되어 있지 않은 경우
@@ -178,7 +178,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         return null;
     }
 
-    private class MakeRequestTask extends AsyncTask<Void, Void, String> {
+    private class MakeRequestTask extends AsyncTask<Void, Void, String> { //v
         private Exception mLastError = null;
         private MainActivity mActivity;
         List<String> eventStrings = new ArrayList<String>();
@@ -330,7 +330,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
         //////////////////////////////////////////////////////////////////////////////
     }
 
-    private void setEvent(String summary, String location, String description, String date) {
+    private void setEvent(String summary, String location, String description, String date) { //v
         eventSummary = summary;
         eventLocation = location;
         eventDescription = description;
@@ -343,7 +343,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
     }
 
     // 선택되어 있는 Google 계정에 새 캘린더를 추가한다.
-    private String createCalendar() throws IOException {
+    private String createCalendar() throws IOException { //v
 
         String ids = getCalendarID("Motibook");
 
@@ -378,7 +378,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
     }
 
     // 캘린더 이름에 대응하는 캘린더 ID를 리턴
-    private String getCalendarID(String calendarTitle) {
+    private String getCalendarID(String calendarTitle) { //v
         String id = null;
 
         // Iterate through entries in calendar list
@@ -413,7 +413,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
 
 
     // 안드로이드 디바이스에 최신 버전의 Google Play Services가 설치되어 있는지 확인
-    private boolean isGooglePlayServicesAvailable() {
+    private boolean isGooglePlayServicesAvailable() { //v
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         final int connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(parents);
         return connectionStatusCode == ConnectionResult.SUCCESS;
@@ -423,7 +423,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
      * Google Play Services 업데이트로 해결가능하다면 사용자가 최신 버전으로 업데이트하도록 유도하기위해
      * 대화상자를 보여줌.
      */
-    private void acquireGooglePlayServices() {
+    private void acquireGooglePlayServices() { //v
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         final int connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(parents);
         if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
@@ -434,7 +434,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
     /*
      * 안드로이드 디바이스에 Google Play Services가 설치 안되어 있거나 오래된 버전인 경우 보여주는 대화상자
      */
-    void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode) {
+    void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode) { //v
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         Dialog dialog = apiAvailability.getErrorDialog(
                 parents,
@@ -450,8 +450,8 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
      * 전에 사용자가 구글 계정을 선택한 적이 없다면 다이얼로그에서 사용자를 선택하도록 한다.
      * GET_ACCOUNTS 퍼미션이 필요하다.
      */
-    @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
-    private void chooseAccount() {
+    @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS) //v
+    private void chooseAccount() { //v
         // GET_ACCOUNTS 권한을 가지고 있다면
         if (EasyPermissions.hasPermissions(parents, Manifest.permission.GET_ACCOUNTS)) {
             // MainActivity 에서 로그인한 정보를 가져온다.
@@ -475,7 +475,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
     }
 
     // 안드로이드 디바이스가 인터넷 연결되어 있는지 확인한다. 연결되어 있다면 True 리턴, 아니면 False 리턴
-    private boolean isDeviceOnline() {
+    private boolean isDeviceOnline() { //v
         ConnectivityManager connMgr = (ConnectivityManager) parents.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -568,7 +568,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
             }
         };
 /*
-        mBtnSubmitQuery.setOnClickListener(new View.OnClickListener() {
+        mBtnSubmitQuery.setOnClickListener(new View.OnClickListener() { //v
             @Override
             public void onClick(View v) {
                 //Toast.makeText(getActivity(), "Submit:" + regionCodeHead + regionCodeTail + eventNameFilter.getText() + queryEventType, Toast.LENGTH_SHORT).show();

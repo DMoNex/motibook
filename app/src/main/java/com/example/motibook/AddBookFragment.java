@@ -162,7 +162,7 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                 }
                                 File noteFile = new File(noteDir + "/" + isbn + "#&#" + bookName + ".txt");
 
-                                    // noteFile이 존재한다면 이미 추가했던 책이므로 아무 동작도 하지 않아야 함
+                                // noteFile이 존재한다면 이미 추가했던 책이므로 아무 동작도 하지 않아야 함
                                 if(noteFile.exists()) {
                                     Toast.makeText(getActivity(), String.format("이미 등록된 도서입니다."), Toast.LENGTH_LONG).show();
                                 }
