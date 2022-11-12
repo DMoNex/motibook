@@ -15,7 +15,12 @@ public class NoteListItemAdapter extends RecyclerView.Adapter<NoteListItemAdapte
         void onItemClick(View v, int pos);
     }
 
+    public interface OnItemLongClickListener {
+        void onItemLongClick(View v, int pos);
+    }
+
     private OnItemClickListener noteItemListener;
+    private OnItemLongClickListener noteLongItemListener;
     ArrayList<NoteListItem> items = new ArrayList<>();
 
     public NoteListItemAdapter(ArrayList<NoteListItem> items) {
@@ -45,6 +50,10 @@ public class NoteListItemAdapter extends RecyclerView.Adapter<NoteListItemAdapte
         noteItemListener = listener;
     }
 
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        noteLongItemListener = listener;
+    }
+
     public class Holder extends RecyclerView.ViewHolder {
         private TextView bookName;
         private TextView ISBN;
@@ -61,6 +70,18 @@ public class NoteListItemAdapter extends RecyclerView.Adapter<NoteListItemAdapte
                     if(pos != RecyclerView.NO_POSITION) {
                         noteItemListener.onItemClick(v, pos);
                     }
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    int pos = getAdapterPosition();
+                    if(pos != RecyclerView.NO_POSITION) {
+                        noteLongItemListener.onItemLongClick(v, pos);
+                    }
+
+                    return false;
                 }
             });
         }

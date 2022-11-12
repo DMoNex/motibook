@@ -1,6 +1,7 @@
 package com.example.motibook;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,8 +22,11 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class NoteFragment extends Fragment implements OnBackPressedListener {
@@ -114,6 +118,45 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
 
             }
         });
+
+        noteListItemAdapter.setOnItemLongClickListener(new NoteListItemAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View v, int pos) {
+
+                String notePath = new String(getActivity().getFilesDir().toString() + "/notes");
+                File noteDir = new File(notePath);
+                if(!noteDir.exists()) {
+                    noteDir.mkdir();
+                }
+
+
+                Intent Sharing_intent = new Intent(Intent.ACTION_SEND);
+                Sharing_intent.setType("text/plain");
+
+                String Test_Message = "";
+                File txtFile = new File(noteDir + "/" + noteListItems.get(pos).getISBN() + "#&#" + noteListItems.get(pos).getBookName() + ".txt");
+                if(txtFile.exists()) {
+                    String contentString = new String();
+                    try {
+                        String str;
+                        BufferedReader fr = new BufferedReader(new FileReader(txtFile));
+                        while((str = fr.readLine()) != null) {
+                            contentString += (str + '\n');
+                        }
+                        Test_Message =contentString;
+                    } catch(IOException e) {
+                    }
+                }
+
+
+                Sharing_intent.putExtra(Intent.EXTRA_TEXT, Test_Message);
+
+                Intent Sharing = Intent.createChooser(Sharing_intent, "공유하기");
+                startActivity(Sharing);
+
+            }
+        });
+
         // filter 와 Adapter 연결
         filter.setAdapter(noteFilterAdapter);
         // noteList 와 Adapter 연결
@@ -122,7 +165,6 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
         // 여러가지 Listener 설정
         filter.setOnItemSelectedListener(noteFilterListener);
         noteSearch.setOnQueryTextListener(noteSearchListener);
-
 
         noteSearchListener.onQueryTextSubmit("");
 
