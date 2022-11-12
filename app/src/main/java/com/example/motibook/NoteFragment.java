@@ -166,6 +166,13 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
         filter.setOnItemSelectedListener(noteFilterListener);
         noteSearch.setOnQueryTextListener(noteSearchListener);
 
+        String tmpNotepath = new String(getActivity().getFilesDir().toString() + "/notes");
+        File tmpNoteDir = new File(tmpNotepath);
+
+        if(!tmpNoteDir.exists()) {
+            tmpNoteDir.mkdir();
+        }
+
         noteSearchListener.onQueryTextSubmit("");
 
         return rootView;
