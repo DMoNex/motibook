@@ -4,20 +4,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddNoteFragment" >
+    tools:context=".AddNoteFragment">
 
     <TextView
         android:id="@+id/noteName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
         android:paddingLeft="15dp"
         android:paddingTop="5dp"
         android:paddingRight="15dp"
         android:paddingBottom="5dp"
         android:text="EmptyText.txt"
         android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ratingEditText"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/ratingEditText"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@null"
+        android:ems="10"
+        android:gravity="bottom|right"
+        android:inputType="text"
+        android:text="0.0"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toStartOf="@+id/ratingText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/ratingText"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:gravity="bottom"
+        android:text="/5.0"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
@@ -31,8 +55,7 @@
         android:padding="10dp"
         android:text="EmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmptyEmpty"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/noteName" />
+        app:layout_constraintTop_toBottomOf="@+id/noteName"
+        tools:layout_editor_absoluteX="1dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
