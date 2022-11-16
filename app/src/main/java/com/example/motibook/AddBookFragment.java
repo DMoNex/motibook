@@ -160,7 +160,7 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                 if(!noteDir.exists()) {
                                     noteDir.mkdir();
                                 }
-                                File noteFile = new File(noteDir + "/" + isbn + "#&#" + bookName + ".txt");
+                                File noteFile = new File(noteDir + "/0#&#" + isbn + "#&#" + bookName + ".txt");
 
                                 // noteFile이 존재한다면 이미 추가했던 책이므로 아무 동작도 하지 않아야 함
                                 if(noteFile.exists()) {
@@ -200,8 +200,9 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                     } catch (IOException e) {
                                         System.out.println (e.toString());
                                     }
+                                    Toast.makeText(getActivity(), "/0#&#" + isbn.split(" ")[0] + "#&#" + bookName + ".txt", Toast.LENGTH_LONG).show();
 
-                                    Toast.makeText(getActivity(), "책이 등록되었습니다.", Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(getActivity(), "책이 등록되었습니다.", Toast.LENGTH_LONG).show();
 
                                 }
                             }
@@ -414,10 +415,8 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                 break;
                             case XmlPullParser.END_TAG:
                                 tag = xpp.getName();
-                                if (tag.equals("item") && isbn != "" ) {
-                                    /*
-                                    여기서 각 지역변수 가지고 list에 item 추가,
-                                    */
+                                if (tag.equals("item") && !isbn.isEmpty()) {
+                                    // 여기서 각 지역변수 가지고 list에 item 추가,
                                     bookListItems.add(new BookListItem(author_info + " - " + pub_name, title_info, isbn, kdc_code_1s));
                                 }
                                 break;

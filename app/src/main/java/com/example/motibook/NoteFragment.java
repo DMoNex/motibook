@@ -110,10 +110,10 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
                     noteDir.mkdir();
                 }
 
-                File noteFile = new File(noteDir + "/" + noteListItems.get(pos).getISBN() + "#&#" + noteListItems.get(pos).getBookName() + ".txt");
+                File noteFile = new File(noteDir + "/" + noteListItems.get(pos).getRating() + "#&#" + noteListItems.get(pos).getISBN() + "#&#" + noteListItems.get(pos).getBookName() + ".txt");
                 if(noteFile.exists()) {
                     // TXT 편집 화면으로 이동
-                    mainAct.onAddNoteFragment(noteDir + "/" + noteListItems.get(pos).getISBN() + "#&#" + noteListItems.get(pos).getBookName() + ".txt");
+                    mainAct.onAddNoteFragment(noteDir + "/" + noteListItems.get(pos).getRating() + "#&#" + noteListItems.get(pos).getISBN() + "#&#" + noteListItems.get(pos).getBookName() + ".txt");
                 }
 
             }
@@ -134,7 +134,7 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
                 Sharing_intent.setType("text/plain");
 
                 String Test_Message = "";
-                File txtFile = new File(noteDir + "/" + noteListItems.get(pos).getISBN() + "#&#" + noteListItems.get(pos).getBookName() + ".txt");
+                File txtFile = new File(noteDir + "/" + noteListItems.get(pos).getRating() + "#&#" + noteListItems.get(pos).getISBN() + "#&#" + noteListItems.get(pos).getBookName() + ".txt");
                 if(txtFile.exists()) {
                     String contentString = new String();
                     try {
@@ -153,7 +153,6 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
 
                 Intent Sharing = Intent.createChooser(Sharing_intent, "공유하기");
                 startActivity(Sharing);
-
             }
         });
 
@@ -209,14 +208,15 @@ public class NoteFragment extends Fragment implements OnBackPressedListener {
             noteListItems.clear();
             for(int i = 0; i < noteFiles.length; ++i) {
                 String[] tmpArr = noteFiles[i].split("#&#");
+
                 if(noteSearchFlag == 0) { // 제목 검색인 경우
-                    if (tmpArr[1].substring(0, tmpArr[1].length()-4).contains(query)) {
-                        noteListItems.add(new NoteListItem(tmpArr[0], tmpArr[1].substring(0, tmpArr[1].length()-4)));
+                    if (tmpArr[2].substring(0, tmpArr[2].length()-4).contains(query)) {
+                        noteListItems.add(new NoteListItem(tmpArr[1], tmpArr[2].substring(0, tmpArr[2].length()-4), Integer.parseInt(tmpArr[0])));
                     }
                 }
                 else if (noteSearchFlag == 1) { // ISBN 검색인 경우
-                    if (tmpArr[0].contains(query)) {
-                        noteListItems.add(new NoteListItem(tmpArr[0], tmpArr[1].substring(0, tmpArr[1].length()-4)));
+                    if (tmpArr[1].contains(query)) {
+                        noteListItems.add(new NoteListItem(tmpArr[1], tmpArr[2].substring(0, tmpArr[2].length()-4), Integer.parseInt(tmpArr[0])));
                     }
                 }
             }

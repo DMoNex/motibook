@@ -39,6 +39,8 @@ public class NoteListItemAdapter extends RecyclerView.Adapter<NoteListItemAdapte
         NoteListItem item = items.get(position);
         holder.bookName.setText(item.getBookName());
         holder.ISBN.setText(item.getISBN());
+        double tmp = item.getRating() / 10.0;
+        holder.rating.setText("Rating " + tmp + "/5.0");
     }
 
     @Override
@@ -57,11 +59,13 @@ public class NoteListItemAdapter extends RecyclerView.Adapter<NoteListItemAdapte
     public class Holder extends RecyclerView.ViewHolder {
         private TextView bookName;
         private TextView ISBN;
+        private TextView rating;
 
         public Holder(@NonNull View itemView) {
             super(itemView);
-            bookName = itemView.findViewById(R.id.bookList_bookName);
-            ISBN = itemView.findViewById(R.id.bookList_author);
+            bookName = itemView.findViewById(R.id.noteList_bookName);
+            ISBN = itemView.findViewById(R.id.noteList_ISBN);
+            rating = itemView.findViewById(R.id.noteList_bookRating);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
