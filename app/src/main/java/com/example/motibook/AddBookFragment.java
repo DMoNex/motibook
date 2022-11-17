@@ -169,41 +169,41 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                 else { // noteFile.txt 생성 (empty)
                                     try {
                                         noteFile.createNewFile();
+
+                                        String filepath = new String(getActivity().getFilesDir().toString() + "/stastics");
+                                        File statDir = new File(filepath);
+                                        // 하위폴더 미존재시 생성
+                                        if(!statDir.exists()) {
+                                            statDir.mkdir();
+                                        }
+                                        File statFile = new File(statDir + "/StatisticsFile.txt");
+
+                                        try {
+                                            statFile.createNewFile();
+                                            FileWriter fw = new FileWriter(statFile);
+                                            fw.write(String.format("%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n",
+                                                    ((MainActivity)getActivity()).statisticsData.data[0],
+                                                    ((MainActivity)getActivity()).statisticsData.data[1],
+                                                    ((MainActivity)getActivity()).statisticsData.data[2],
+                                                    ((MainActivity)getActivity()).statisticsData.data[3],
+                                                    ((MainActivity)getActivity()).statisticsData.data[4],
+                                                    ((MainActivity)getActivity()).statisticsData.data[5],
+                                                    ((MainActivity)getActivity()).statisticsData.data[6],
+                                                    ((MainActivity)getActivity()).statisticsData.data[7],
+                                                    ((MainActivity)getActivity()).statisticsData.data[8],
+                                                    ((MainActivity)getActivity()).statisticsData.data[9]));
+                                            fw.flush();
+                                            fw.close();
+                                        } catch (IOException e) {
+                                            System.out.println (e.toString());
+                                        }
+                                        Toast.makeText(getActivity(), "책이 등록되었습니다.", Toast.LENGTH_LONG).show();
+
                                     } catch (IOException e) {
                                         System.out.println (e.toString());
+                                        Toast.makeText(getActivity(), noteFile.toString(), Toast.LENGTH_LONG).show();
+                                        //Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_LONG).show();
                                     }
-
-                                    String filepath = new String(getActivity().getFilesDir().toString() + "/stastics");
-                                    File statDir = new File(filepath);
-                                    // 하위폴더 미존재시 생성
-                                    if(!statDir.exists()) {
-                                        statDir.mkdir();
-                                    }
-                                    File statFile = new File(statDir + "/StatisticsFile.txt");
-
-                                    try {
-                                        statFile.createNewFile();
-                                        FileWriter fw = new FileWriter(statFile);
-                                        fw.write(String.format("%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n",
-                                                ((MainActivity)getActivity()).statisticsData.data[0],
-                                                ((MainActivity)getActivity()).statisticsData.data[1],
-                                                ((MainActivity)getActivity()).statisticsData.data[2],
-                                                ((MainActivity)getActivity()).statisticsData.data[3],
-                                                ((MainActivity)getActivity()).statisticsData.data[4],
-                                                ((MainActivity)getActivity()).statisticsData.data[5],
-                                                ((MainActivity)getActivity()).statisticsData.data[6],
-                                                ((MainActivity)getActivity()).statisticsData.data[7],
-                                                ((MainActivity)getActivity()).statisticsData.data[8],
-                                                ((MainActivity)getActivity()).statisticsData.data[9]));
-                                        fw.flush();
-                                        fw.close();
-                                    } catch (IOException e) {
-                                        System.out.println (e.toString());
-                                    }
-                                    Toast.makeText(getActivity(), "/0#&#" + isbn.split(" ")[0] + "#&#" + bookName + ".txt", Toast.LENGTH_LONG).show();
-
-                                    //Toast.makeText(getActivity(), "책이 등록되었습니다.", Toast.LENGTH_LONG).show();
-
                                 }
                             }
                         });

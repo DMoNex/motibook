@@ -19,18 +19,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AddNoteFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class AddNoteFragment extends Fragment implements OnBackPressedListener {
     MainActivity mainAct;
     TextView fileName;
     EditText contents;
+    EditText noteRating;
 
     String fileNameString;
     String contentString;
+
+    int prevRating;
+    int newRating;
 
     public AddNoteFragment() {
         // Required empty public constructor
@@ -72,7 +72,7 @@ public class AddNoteFragment extends Fragment implements OnBackPressedListener {
 
         // Filepath 에서 txt 파일 이름 추출
         String[] tmpArr = mainAct.getLastFilePath().split("#&#");
-        fileNameString = tmpArr[1].substring(0, tmpArr[1].length()-4);
+        fileNameString = tmpArr[2].substring(0, tmpArr[2].length()-4);
 
         // TextView 에 파일 이름 세팅
         fileName = (TextView)rootView.findViewById(R.id.noteName);
@@ -80,6 +80,12 @@ public class AddNoteFragment extends Fragment implements OnBackPressedListener {
 
         // contents 는 본문 EditText
         contents = (EditText)rootView.findViewById(R.id.TextEditor);
+        // noteRating 은 평점 EditText
+        noteRating = (EditText)rootView.findViewById(R.id.ratingEditText);
+
+        prevRating = Integer.parseInt(tmpArr[0].split("notes/")[1]);
+        String strPrevRating = String.format("%.1f", prevRating / 10.0);
+        noteRating.setText(strPrevRating);
 
         // Filepath 이용하여 txt 파일 열기
         File txtFile = new File(mainAct.getLastFilePath());
