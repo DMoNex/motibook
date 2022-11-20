@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -161,9 +163,17 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                     noteDir.mkdir();
                                 }
                                 File noteFile = new File(noteDir + "/0#&#" + isbn + "#&#" + bookName + ".txt");
+                                String noteFiles[] = noteDir.list();
+                                boolean check = false;
+
+                                for (String fileN : noteFiles) {
+                                    if (fileN.contains(isbn)) {
+                                        check = true;
+                                    }
+                                }
 
                                 // noteFile이 존재한다면 이미 추가했던 책이므로 아무 동작도 하지 않아야 함
-                                if(noteFile.exists()) {
+                                if(check) {
                                     Toast.makeText(getActivity(), String.format("이미 등록된 도서입니다."), Toast.LENGTH_LONG).show();
                                 }
                                 else { // noteFile.txt 생성 (empty)
@@ -201,8 +211,6 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
 
                                     } catch (IOException e) {
                                         System.out.println (e.toString());
-                                        Toast.makeText(getActivity(), noteFile.toString(), Toast.LENGTH_LONG).show();
-                                        //Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_LONG).show();
                                     }
                                 }
                             }
@@ -255,7 +263,6 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
             try {
                 pageNum = 1;
                 bookListItems.clear();
-
 
                 bookSearchFlag = filter.getSelectedItemPosition();
                 mKwd = URLEncoder.encode(query.trim(), "utf-8");
@@ -415,9 +422,10 @@ public class AddBookFragment extends Fragment implements OnBackPressedListener {
                                 break;
                             case XmlPullParser.END_TAG:
                                 tag = xpp.getName();
-                                if (tag.equals("item") && !isbn.isEmpty()) {
+                                if (tag.equals("item") && (isbn != null)) {
                                     // 여기서 각 지역변수 가지고 list에 item 추가,
                                     bookListItems.add(new BookListItem(author_info + " - " + pub_name, title_info, isbn, kdc_code_1s));
+                                    Log.v("bookListAdd:" , author_info + " - " + pub_name + ", " + title_info + ", " + isbn + ", " + kdc_code_1s);
                                 }
                                 break;
                         }
