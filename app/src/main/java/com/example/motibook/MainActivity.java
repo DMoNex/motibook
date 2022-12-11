@@ -81,9 +81,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // 로그인 이력 있으면 자동 로그인, 없으면 Email 요구
         GoogleSignInAccount gsa = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
-        if (gsa != null && gsa.getId() != null) {
-
-        }
 
         // Login
         signIn();

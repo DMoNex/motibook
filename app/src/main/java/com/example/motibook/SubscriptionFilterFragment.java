@@ -161,6 +161,8 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
                     for(QueryDocumentSnapshot doc : task.getResult()) {
                         Map<String, Object> data = doc.getData();
 
+                        //Toast.makeText(getActivity(), task.getResult().size(), Toast.LENGTH_LONG).show();
+
                         EventListItem eventListItem = new EventListItem(data.get("addressHead").toString(),
                                 data.get("addressTail").toString(),
                                 data.get("date").toString(),
@@ -224,9 +226,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
             calendar.add(java.util.Calendar.MONTH, 1);
             SimpleDateFormat curDateFormat = new SimpleDateFormat("yyMMdd");
             String strCurDate = curDateFormat.format(new Date());
-            String strEndDate = "" + calendar.get(java.util.Calendar.YEAR)
-                                   + (calendar.get(java.util.Calendar.MONTH) + 1)
-                                   + calendar.get(java.util.Calendar.DATE);
+            String strEndDate = curDateFormat.format(calendar.getTime());
 
             // collection 객체 생성
             CollectionReference eventRef = db.collection("libEvent");
@@ -234,7 +234,7 @@ public class SubscriptionFilterFragment extends Fragment implements OnBackPresse
             // Query 객체 생성
             // 현재 날짜로부터 1달간의 데이터 조회 (strCurDate ~ strEndDate.substring(2))
             Query eventQuery = eventRef.whereGreaterThan("date", Integer.parseInt(strCurDate))
-                    .whereLessThan("date", Integer.parseInt(strEndDate.substring(2)));
+                    .whereLessThan("date", Integer.parseInt(strEndDate));
 
             // 지역 Head 필터 있으면
             if(!regionCodeHead.equals("*")) {
